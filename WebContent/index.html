@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<!-- Common Kendo UI CSS for web and dataviz widgets -->
+<link href="styles/kendo.common.min.css" rel="stylesheet" />
+
+<!-- Default Kendo UI theme CSS for web and dataviz widgets -->
+<link href="styles/kendo.default.min.css" rel="stylesheet" />
+
+<!-- (optional) Kendo UI Mobile CSS, include only if you will use the mobile devices features -->
+<link href="styles/kendo.default.mobile.min.css" rel="stylesheet" type="text/css" />
+
+<!-- jQuery JavaScript -->
+<script src="js/jquery.min.js"></script>
+
+<!-- Kendo UI combined JavaScript -->
+<script src="js/kendo.all.min.js"></script>
+<script src="js/kendoConfigurationUI.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/main.js" type="text/javascript" charset="utf-8"></script>
+<title>League Of Legends API Beta</title>
+</head>
+<body>
+<select id="region">
+	<option value="na">North America</option>
+	<option value="euw">Western Europe</option>
+	<option value="eune">Northeastern Europe</option>
+	<option value="br">Brazil</option>
+	<option value="oce">Oceania</option>
+	<option value="kr">Korea</option>
+</select>
+<select id="queryType">
+	<option value=0>Unspecified</option>
+	<option value=1>By Champion</option>
+	<option value=2>By Role</option>
+	<option value=3>By Team</option>
+</select>
+<input id="name" type="text">
+<button id="getApi" onclick="fetchSummonerID();">Click me!</button>
+<div id="populateDiv">
+Hello!
+</div>
+</body>
+</html>
