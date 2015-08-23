@@ -6,7 +6,12 @@ import java.util.Date;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class PlayerGameBean extends GenericBean{
+/**
+ * The League API splits into two types of data given to the developer. The gamev1.3 data has universal usage.
+ * The amount of info given to the user is minimalized.
+ * @author oneraynyday
+ */
+public class PlayerGameBean{
 	//pre-made constants
 	transient final int NUM_OF_ITEMS = 7;
 	transient final int NUM_OF_SPELLS = 2;
@@ -36,26 +41,19 @@ public class PlayerGameBean extends GenericBean{
 	int barracksKilled;	//# of inhibitors
 	int championsKilled;	
 	int combatPlayerScore;		
-	int consumablesPurchased;		
-	int damageDealtPlayer;		
 	int doubleKills;	
 	int firstBlood;	
 	int gold;	
 	int goldEarned;	
 	int goldSpent;				
-	int itemsPurchased;		
 	int killingSprees;		
-	int largestCriticalStrike;		
 	int largestKillingSpree;		
 	int largestMultiKill;		
 	int legendaryItemsCreated;	//Number of tier 3 items built.
 	int level;
-	int magicDamageDealtPlayer;	
 	int magicDamageDealtToChampions;	
 	int magicDamageTaken;	
-	int minionsDenied;	
 	int minionsKilled;	
-	int neutralMinionsKilled;
 	int neutralMinionsKilledEnemyJungle;
 	int neutralMinionsKilledYourJungle;
 	boolean nexusKilled;	//boolean	Flag specifying if the summoner got the killing blow on the nexus.
@@ -64,20 +62,14 @@ public class PlayerGameBean extends GenericBean{
 	int nodeNeutralize;
 	int nodeNeutralizeAssist;	
 	int numDeaths;
-	int numItemsBought;
 	int objectivePlayerScore;
 	int pentaKills;
-	int physicalDamageDealtPlayer;
 	int physicalDamageDealtToChampions;	
 	int physicalDamageTaken;	
 	int playerPosition;	//Player position (Legal values: TOP(1), MIDDLE(2), JUNGLE(3), BOT(4))
 	public int playerRole;		//Player role (Legal values: DUO(1), SUPPORT(2), CARRY(3), SOLO(4))
 	int quadraKills;	
 	int sightWardsBought;		
-	ArrayList<Integer> spellsCast;	//		Number of times champion spells were cast.
-	int summonSpell1Cast;		
-	int summonSpell2Cast;		
-	int superMonsterKilled;
 	public int teamID;
 	int teamObjective;
 	int totalDamageDealt;
@@ -89,7 +81,6 @@ public class PlayerGameBean extends GenericBean{
 	int totalTimeCrowdControlDealt;
 	int totalUnitsHealed;
 	int tripleKills;
-	int trueDamageDealtPlayer;
 	int trueDamageDealtToChampions;
 	int trueDamageTaken;
 	int turretsKilled;
@@ -242,23 +233,6 @@ public class PlayerGameBean extends GenericBean{
 	public void setCombatPlayerScore(int combatPlayerScore) {
 		this.combatPlayerScore = combatPlayerScore;
 	}
-
-	public int getConsumablesPurchased() {
-		return consumablesPurchased;
-	}
-
-	public void setConsumablesPurchased(int consumablesPurchased) {
-		this.consumablesPurchased = consumablesPurchased;
-	}
-
-	public int getDamageDealtPlayer() {
-		return damageDealtPlayer;
-	}
-
-	public void setDamageDealtPlayer(int damageDealtPlayer) {
-		this.damageDealtPlayer = damageDealtPlayer;
-	}
-
 	public int getDoubleKills() {
 		return doubleKills;
 	}
@@ -299,13 +273,6 @@ public class PlayerGameBean extends GenericBean{
 		this.goldSpent = goldSpent;
 	}
 
-	public int getItemsPurchased() {
-		return itemsPurchased;
-	}
-
-	public void setItemsPurchased(int itemsPurchased) {
-		this.itemsPurchased = itemsPurchased;
-	}
 
 	public int getKillingSprees() {
 		return killingSprees;
@@ -313,14 +280,6 @@ public class PlayerGameBean extends GenericBean{
 
 	public void setKillingSprees(int killingSprees) {
 		this.killingSprees = killingSprees;
-	}
-
-	public int getLargestCriticalStrike() {
-		return largestCriticalStrike;
-	}
-
-	public void setLargestCriticalStrike(int largestCriticalStrike) {
-		this.largestCriticalStrike = largestCriticalStrike;
 	}
 
 	public int getLargestKillingSpree() {
@@ -355,14 +314,6 @@ public class PlayerGameBean extends GenericBean{
 		this.level = level;
 	}
 
-	public int getMagicDamageDealtPlayer() {
-		return magicDamageDealtPlayer;
-	}
-
-	public void setMagicDamageDealtPlayer(int magicDamageDealtPlayer) {
-		this.magicDamageDealtPlayer = magicDamageDealtPlayer;
-	}
-
 	public int getMagicDamageDealtToChampions() {
 		return magicDamageDealtToChampions;
 	}
@@ -378,29 +329,12 @@ public class PlayerGameBean extends GenericBean{
 	public void setMagicDamageTaken(int magicDamageTaken) {
 		this.magicDamageTaken = magicDamageTaken;
 	}
-
-	public int getMinionsDenied() {
-		return minionsDenied;
-	}
-
-	public void setMinionsDenied(int minionsDenied) {
-		this.minionsDenied = minionsDenied;
-	}
-
 	public int getMinionsKilled() {
 		return minionsKilled;
 	}
 
 	public void setMinionsKilled(int minionsKilled) {
 		this.minionsKilled = minionsKilled;
-	}
-
-	public int getNeutralMinionsKilled() {
-		return neutralMinionsKilled;
-	}
-
-	public void setNeutralMinionsKilled(int neutralMinionsKilled) {
-		this.neutralMinionsKilled = neutralMinionsKilled;
 	}
 
 	public int getNeutralMinionsKilledEnemyJungle() {
@@ -467,14 +401,6 @@ public class PlayerGameBean extends GenericBean{
 		this.numDeaths = numDeaths;
 	}
 
-	public int getNumItemsBought() {
-		return numItemsBought;
-	}
-
-	public void setNumItemsBought(int numItemsBought) {
-		this.numItemsBought = numItemsBought;
-	}
-
 	public int getObjectivePlayerScore() {
 		return objectivePlayerScore;
 	}
@@ -490,15 +416,7 @@ public class PlayerGameBean extends GenericBean{
 	public void setPentaKills(int pentaKills) {
 		this.pentaKills = pentaKills;
 	}
-
-	public int getPhysicalDamageDealtPlayer() {
-		return physicalDamageDealtPlayer;
-	}
-
-	public void setPhysicalDamageDealtPlayer(int physicalDamageDealtPlayer) {
-		this.physicalDamageDealtPlayer = physicalDamageDealtPlayer;
-	}
-
+	
 	public int getPhysicalDamageDealtToChampions() {
 		return physicalDamageDealtToChampions;
 	}
@@ -546,39 +464,6 @@ public class PlayerGameBean extends GenericBean{
 	public void setSightWardsBought(int sightWardsBought) {
 		this.sightWardsBought = sightWardsBought;
 	}
-
-	public ArrayList<Integer> getSpellsCast() {
-		return spellsCast;
-	}
-
-	public void setSpellsCast(ArrayList<Integer> spellsCast) {
-		this.spellsCast = spellsCast;
-	}
-
-	public int getSummonSpell1Cast() {
-		return summonSpell1Cast;
-	}
-
-	public void setSummonSpell1Cast(int summonSpell1Cast) {
-		this.summonSpell1Cast = summonSpell1Cast;
-	}
-
-	public int getSummonSpell2Cast() {
-		return summonSpell2Cast;
-	}
-
-	public void setSummonSpell2Cast(int summonSpell2Cast) {
-		this.summonSpell2Cast = summonSpell2Cast;
-	}
-
-	public int getSuperMonsterKilled() {
-		return superMonsterKilled;
-	}
-
-	public void setSuperMonsterKilled(int superMonsterKilled) {
-		this.superMonsterKilled = superMonsterKilled;
-	}
-
 	public int getTeamID() {
 		return teamID;
 	}
@@ -665,14 +550,6 @@ public class PlayerGameBean extends GenericBean{
 
 	public void setTripleKills(int tripleKills) {
 		this.tripleKills = tripleKills;
-	}
-
-	public int getTrueDamageDealtPlayer() {
-		return trueDamageDealtPlayer;
-	}
-
-	public void setTrueDamageDealtPlayer(int trueDamageDealtPlayer) {
-		this.trueDamageDealtPlayer = trueDamageDealtPlayer;
 	}
 
 	public int getTrueDamageDealtToChampions() {
@@ -762,7 +639,6 @@ public class PlayerGameBean extends GenericBean{
 		championId = json.getInt("championId");
 		itemsID = new ArrayList<Integer>();
 		spellsID = new ArrayList<Integer>();
-		spellsCast = new ArrayList<Integer>();
 		JSONObject stats = json.getJSONObject("stats");
 
 		gameDuration = loadJsonInt("timePlayed", stats); 
@@ -770,26 +646,19 @@ public class PlayerGameBean extends GenericBean{
 		barracksKilled = loadJsonInt("barracksKilled", stats);	//# of inhibitors
 		championsKilled = loadJsonInt("championsKilled", stats);	
 		combatPlayerScore = loadJsonInt("combatPlayerScore", stats);		
-		consumablesPurchased = loadJsonInt("consumablesPurchased", stats);		
-		damageDealtPlayer = loadJsonInt("damageDealtPlayer", stats);		
 		doubleKills = loadJsonInt("doubleKills", stats);	
 		firstBlood = loadJsonInt("firstBlood", stats);	
 		gold = loadJsonInt("gold", stats);	
 		goldEarned = loadJsonInt("goldEarned", stats);	
 		goldSpent = loadJsonInt("goldSpent", stats);				
-		itemsPurchased = loadJsonInt("itemsPurchased", stats);		
 		killingSprees = loadJsonInt("killingSprees", stats);		
-		largestCriticalStrike = loadJsonInt("largestCriticalStrike", stats);		
 		largestKillingSpree = loadJsonInt("largestKillingSpree", stats);		
 		largestMultiKill = loadJsonInt("largestMultiKill", stats);		
 		legendaryItemsCreated = loadJsonInt("legendaryItemsCreated", stats);	//Number of tier 3 items built.
 		level = loadJsonInt("level", stats);
-		magicDamageDealtPlayer = loadJsonInt("magicDamageDealtPlayer", stats);	
 		magicDamageDealtToChampions = loadJsonInt("magicDamageDealtToChampions", stats);	
 		magicDamageTaken = loadJsonInt("magicDamageTaken", stats);	
-		minionsDenied = loadJsonInt("minionsDenied", stats);	
 		minionsKilled = loadJsonInt("minionsKilled", stats);	
-		neutralMinionsKilled = loadJsonInt("neutralMinionsKilled", stats);
 		neutralMinionsKilledEnemyJungle = loadJsonInt("neutralMinionsKilledEnemyJungle", stats);
 		neutralMinionsKilledYourJungle = loadJsonInt("neutralMinionsKilledYourJungle", stats);
 		nexusKilled = loadJsonBool("nexusKilled", stats);	//boolean	Flag specifying if the summoner got the killing blow on the nexus.
@@ -798,17 +667,14 @@ public class PlayerGameBean extends GenericBean{
 		nodeNeutralize = loadJsonInt("nodeNeutralize", stats);
 		nodeNeutralizeAssist = loadJsonInt("nodeNeutralizeAssist", stats);	
 		numDeaths = loadJsonInt("numDeaths", stats);
-		numItemsBought = loadJsonInt("numItemsBought", stats);
 		objectivePlayerScore = loadJsonInt("objectivePlayerScore", stats);
 		pentaKills = loadJsonInt("pentaKills", stats);
-		physicalDamageDealtPlayer = loadJsonInt("physicalDamageDealtPlayer", stats);
 		physicalDamageDealtToChampions = loadJsonInt("physicalDamageDealtToChampions", stats);	
 		physicalDamageTaken = loadJsonInt("physicalDamageTaken", stats);	
 		playerPosition = loadJsonInt("playerPosition", stats);	//Player position (Legal values: TOP(1), MIDDLE(2), JUNGLE(3), BOT(4))
 		playerRole = loadJsonInt("playerRole", stats);		//Player role (Legal values: DUO(1), SUPPORT(2), CARRY(3), SOLO(4))
 		quadraKills = loadJsonInt("quadraKills", stats);	
 		sightWardsBought = loadJsonInt("sightWardsBought", stats);		
-		superMonsterKilled = loadJsonInt("superMonsterKilled", stats);
 		teamObjective = loadJsonInt("teamObjective", stats);
 		totalDamageDealt = loadJsonInt("totalDamageDealt", stats);
 		totalDamageDealtToChampions = loadJsonInt("totalDamageDealtToChampions", stats);
@@ -819,7 +685,6 @@ public class PlayerGameBean extends GenericBean{
 		totalTimeCrowdControlDealt = loadJsonInt("totalTimeCrowdControlDealt", stats);
 		totalUnitsHealed = loadJsonInt("totalUnitsHealed", stats);
 		tripleKills = loadJsonInt("tripleKills", stats);
-		trueDamageDealtPlayer = loadJsonInt("trueDamageDealtPlayer", stats);
 		trueDamageDealtToChampions = loadJsonInt("trueDamageDealtToChampions", stats);
 		trueDamageTaken = loadJsonInt("trueDamageTaken", stats);
 		turretsKilled = loadJsonInt("turretsKilled", stats);
@@ -843,12 +708,7 @@ public class PlayerGameBean extends GenericBean{
 		for(int i=1; i <= NUM_OF_SPELLS; i++){
 			spellsID.add(loadJsonInt("spell" + i, json));
 		}
-		for(int i=1; i <= NUM_OF_CHAMPION_SPELLS; i++){
-			if(i < 5)
-				spellsCast.add(loadJsonInt("spell"+i+"Cast", stats));
-			else
-				spellsCast.add(loadJsonInt("summonSpell" + (i-4) +"Cast", stats));   
-		}
+
 	}
 	public static int loadJsonInt(String param, JSONObject json){
 		int field;

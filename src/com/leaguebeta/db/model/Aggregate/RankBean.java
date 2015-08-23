@@ -1,6 +1,9 @@
-package com.leaguebeta.db.model;
+package com.leaguebeta.db.model.Aggregate;
 
-public class RankBean extends GenericBean implements Comparable<RankBean>{
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+public class RankBean implements Comparable<RankBean>{
 	int rank;
 	int division;
 	public RankBean(int rank, int division){

@@ -7,7 +7,7 @@ import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.leaguebeta.db.model.RankBean;
+import com.leaguebeta.db.model.Aggregate.RankBean;
 
 public class RankBeanMapper {
 	static Map<String, Integer> rankWeight = new HashMap<String, Integer>();
@@ -28,24 +28,30 @@ public class RankBeanMapper {
 		divisionWeight.put("II", 4);
 		divisionWeight.put("I", 5);
 	}
-	public static Map<String, RankBean> SimplifyBean(JSONArray json){
+	/**
+	 * Simplifies a jsonobject's leagues into a rank bean.
+	 * @param json - entry of arrays
+	 * @return
+	 */
+	public static Map<String, RankBean> simplifyBean(JSONArray json){
 		Map<String, RankBean> ranks = new HashMap<String, RankBean>();
 		for(int i = 0; i < json.length(); i++){
 			JSONObject indivRank = json.getJSONObject(i);
 			JSONArray entries = indivRank.getJSONArray("entries");
-			for(int j = 0; j < entries.length(); j++){
-				if(ranks.get(indivRank.getString("queue")) == null){
-					ranks.put(indivRank.getString("queue"), new RankBean(rankWeight.get(indivRank.getString("tier")), divisionWeight.get(entries.getJSONObject(j).getString("division"))));
-				}
-				else{
-					RankBean temp = new RankBean(rankWeight.get(indivRank.getString("tier")), divisionWeight.get(entries.getJSONObject(j).getString("division")));
-					if(temp.compareTo(ranks.get(indivRank.getString("queue"))) > 0){
-						ranks.put(indivRank.getString("queue"), temp);
-					}
-				}
-			}
+			//***LAZY IMPLEMENTATION*** find first one
+			RankBean rank = new RankBean(rankWeight.get(indivRank.getString("tier")), divisionWeight.get(entries.getJSONObject(0).getString("division")));
+			ranks.put(indivRank.getString("queue"), rank);
 		}
 		System.out.println(ranks);
 		return ranks;
+	}
+	public static RankBean getSpecificRank(JSONArray json, String query){
+		for(int i = 0; i < json.length(); i++){
+			JSONObject obj = json.getJSONObject(i);
+			if(obj.optString("queue").equals(query)){
+				return new RankBean(rankWeight.get(obj.getString("tier")), divisionWeight.get(obj.getJSONArray("entries").getJSONObject(0).getString("division")));
+			}
+		}
+		return new RankBean(0,0);
 	}
 }

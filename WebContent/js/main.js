@@ -48,7 +48,31 @@ function confirmation(sumName){
 	else
 		return false;
 }
-
+function fetchMatchHistory(json){
+	var summonerID = json.id;
+	var jsonQuery = {};
+	jsonQuery["playerId"] = summonerID;
+    jsonQuery["region"] = region;
+    jsonQuery["includeTimeline"] = true,
+    jsonQuery["rankedQueues"] = ["RANKED_SOLO_5x5"];
+    jsonQuery["seasons"] = ["SEASON2015", "PRESEASON2015"];
+    alert("hi");
+	$.ajax({
+		url: 'League/postMatches',
+		type: 'POST',
+        dataType: 'json',
+        contentType: 'application/json',
+        data: JSON.stringify(jsonQuery),
+        success: function (json) {
+        	alert("SUCCESS : " + JSON.stringify(json));
+        	loadDiv(json);
+        },            
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+        	alert("Sending match history failed: " + errorThrown);
+        }
+	});
+}
+/*
 function fetchMatchHistory(json){
 	var summonerID = json.id;
 	$.ajax({
@@ -68,10 +92,10 @@ function fetchMatchHistory(json){
         }
 	});
 }
-
+*/
 function fetchPlayerRankings(summonerID, region, callback){
 	$.ajax({
-		url: 'https://' + region + '.api.pvp.net/api/lol/' + region + '/v2.5/league/by-summoner/' + summonerID + '/entry?api_key=' + API_KEY,
+		url:"" ,
 		type: 'GET',
         dataType: 'json',
         data: {
@@ -87,6 +111,25 @@ function fetchPlayerRankings(summonerID, region, callback){
         }
 	});
 }
+
+/*function testCall(){
+	$.ajax({
+		url:"" ,
+		type: 'GET',
+        dataType: 'json',
+        data: {
+        	//empty because we are GETTING, not POSTING
+        },
+        success: function (json) {
+        	alert(JSON.stringify(json));
+        	if(typeof callback === "function")
+        		callback(json);
+        },            
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+        	alert("Fetching match history failed: " + errorThrown);
+        }
+	});
+}*/
 
 //not yet implemented anywhere - will not use backend for this
 function getLeaderboardBySummoner(summonerID, region){

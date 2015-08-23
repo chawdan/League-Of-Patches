@@ -21,4 +21,9 @@ public class BeanParser<T>{
 		T obj = gson.fromJson(gson.toJson(json), classType);
 		return obj;
 	}
+	public static <T> BasicDBObject parseAnyBean(T bean){
+		Gson gson = new Gson();
+		BasicDBObject obj = (BasicDBObject)JSON.parse(gson.toJson(bean));
+		return obj;
+	}
 }
