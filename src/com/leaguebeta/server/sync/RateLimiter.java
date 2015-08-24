@@ -38,19 +38,20 @@ public class RateLimiter {
 	 *      True if the request succeeded, false if rate limit has been reached
 	 */
 	public ResponseObject tryRequest(APICaller api, String url) {
-		if(!IS_DEVELOPER_KEY){
+		if(IS_DEVELOPER_KEY){
 			synchronized(lock){
 				String json = api.call(url);
+				//System.out.println(json);
 				if(json.equals("404")){//a 404 message surfaced
 					return new ResponseObject(false, null);
 				}
-				else if(json.equals("429")){
+				else if(json.equals("429") || json.equals("503")){
 					try {
 						Thread.sleep(500);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
-					json = tryRequest(api, url).getJson();
+					return new ResponseObject(true, tryRequest(api, url).getJson());
 				}
 				return new ResponseObject(true, json);
 			}

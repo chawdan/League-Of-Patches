@@ -29,12 +29,11 @@ public class MatchBean {
 	String season;	//	string	Season match was played (Legal values: PRESEASON3, SEASON3, PRESEASON2014, SEASON2014, PRESEASON2015, SEASON2015)
 	/* super tight game data from Frames */
 	//EventBean[] events;	//	List[Event]	List of events for this frame. 
-	HashMap<String, Object>[] events;
-	ParticipantFrameBean[] participantFrames;	//	Map[string, ParticipantFrame]	Map of each participant ID to the participant's information for the frame.
+	//HashMap<String, Object>[] events;
+	//ParticipantFrameBean[] participantFrames;	//	Map[string, ParticipantFrame]	Map of each participant ID to the participant's information for the frame.
 	public MatchBean(){/*empty on purpose*/}
 	public MatchBean(int mapId, long matchCreation, long matchDuration, long matchId, String matchMode,
-			String matchType, String matchVersion, String platformId, String queueType, String region, String season,
-			HashMap<String, Object>[] events, ParticipantFrameBean[] participantFrames) {
+			String matchType, String matchVersion, String platformId, String queueType, String region, String season) {
 		super();
 		this.mapId = mapId;
 		this.matchCreation = matchCreation;
@@ -47,8 +46,6 @@ public class MatchBean {
 		this.queueType = queueType;
 		this.region = region;
 		this.season = season;
-		this.events = events;
-		this.participantFrames = participantFrames;
 	}
 	
 	public List<String> getQueryParams() {
@@ -56,18 +53,6 @@ public class MatchBean {
 	}
 	public void setQueryParams(ArrayList<String> queryParams) {
 		this.queryParams = queryParams;
-	}
-	public HashMap<String, Object>[] getEvents() {
-		return events;
-	}
-	public void setEvents(HashMap<String, Object>[] events) {
-		this.events = events;
-	}
-	public ParticipantFrameBean[] getParticipantFrames() {
-		return participantFrames;
-	}
-	public void setParticipantFrames(ParticipantFrameBean[] participantFrames) {
-		this.participantFrames = participantFrames;
 	}
 	public int getMapId() {
 		return mapId;

@@ -6,9 +6,11 @@ import com.leaguebeta.db.connection.ClientConnector;
 import com.leaguebeta.db.model.Aggregate.ChampionBean;
 import com.leaguebeta.db.model.Aggregate.ItemBean;
 import com.leaguebeta.db.model.Aggregate.ItemInfo;
+import com.leaguebeta.db.model.Aggregate.MasteryAggregateBean;
 import com.leaguebeta.db.model.Aggregate.MatchPackageBean;
 import com.leaguebeta.db.model.PlayerGameBean;
 import com.leaguebeta.db.model.Aggregate.RankBean;
+import com.leaguebeta.db.model.Aggregate.RuneAggregateBean;
 import com.leaguebeta.db.model.Aggregate.TimeStats;
 import com.leaguebeta.db.model.Match.MatchBean;
 import com.leaguebeta.db.model.Match.Timeline.EventBean;
@@ -46,6 +48,7 @@ import org.json.JSONObject;
 @WebServlet(name = "League", urlPatterns = { "/League/*" })
 public class BetaServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	private static final boolean KILL_UPON_DUPLICATE = true;
     ClientConnector connection;
     APICaller caller;
     /**
@@ -80,7 +83,7 @@ public class BetaServlet extends HttpServlet {
 				System.out.println(matchJson);
 				break;
 			case "/callRiotLeague":
-				JSONObject leagueJson = caller.callRiotLeague(request.getParameter("region"), Integer.getInteger(request.getParameter("summonerId")));
+				JSONObject leagueJson = caller.callRiotLeague(request.getParameter("region"), request.getParameter("summonerId"));
 				break;
 			case "/callRiotSummoner":
 				JSONObject summonerJson = caller.callRiotSummoner(request.getParameter("region"), 
@@ -154,47 +157,41 @@ public class BetaServlet extends HttpServlet {
 		/*use array values to send more api calls*/
 		JSONObject matchList = caller.callRiotMatchList(playerId, region, rankQueue, season, champion);
 		JSONArray matches = matchList.getJSONArray("matches");
+		JSONObject recentMatches = caller.callRiotMatchHistory(region, ""+playerId);
 		try {
 			PrintWriter out = res.getWriter();
-			out.write((new Gson()).toJson(matches));
+			out.write((new Gson()).toJson(recentMatches));
+			out.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		for(int i = 0; i < matches.length(); i++){
+			System.out.println("one match processed.");
 			JSONObject value = caller.callRiotMatch(region, ""+matches.getJSONObject(i).getInt("matchId"), includeTimeline);
-			System.out.println(value);
 			MatchPackageBean matchPackage = BeanDelegator.delegateMatchJson(value);
 			/*create beanparser and send these items into the db as they are initialized*/
 			MatchBean match = matchPackage.getMatch();
-			//connection.insertJson(BeanParser.parseAnyBean(match), region + "_collection_match", MatchBean.queryParams);
-			ParticipantFrameBean[] frames = match.getParticipantFrames();
-			HashMap<String, Object>[] events = match.getEvents();
-			Map<Integer, List<ItemInfo>> itemEvents = new HashMap<>();
-			for(int j = 0; j < events.length; j++){
-				HashMap<String, Object> event = events[j];
-				String type = (String) event.get("eventType");
-				if(type.equals("ITEM_PURCHASED") || type.equals("ITEM_DESTROYED")){
-					int itemId = (int) event.get("itemId");
-					int timeStamp = (int) event.get("timestamp");
-					int participantId = (int) event.get("participantId");
-					List<ItemInfo> itemList = itemEvents.computeIfAbsent(participantId, l -> new ArrayList<ItemInfo>());
-					itemList.add(new ItemInfo(itemId, timeStamp, type));
-				}
-			}
-			
+			connection.insertJson(BeanParser.parseAnyBean(match), region + "_collection_match", MatchBean.queryParams);
 			PlayerMatchBean[] players = matchPackage.getPlayers();
+			String[] queryString = new String[players.length];
+			for(int j = 0; j < players.length; j++){
+				queryString[j] = ""+players[j].getSummonerId();
+			}
+			String queryCompound = String.join(",", queryString);
+			JSONObject allLeagues = caller.callRiotLeague(region, queryCompound);
 			for(PlayerMatchBean player : players){
 				//each player has their own rankings - so call the api for it
-				JSONArray leagues = null;
+				JSONArray league = null;
 				try{
-					leagues = caller.callRiotLeague(region, player.getSummonerId()).getJSONArray(""+player.getSummonerId());
-				}catch(NullPointerException e){
-					leagues = new JSONArray();
+					league = allLeagues.getJSONArray(""+player.getSummonerId());
+				}catch(JSONException e){
+					league = new JSONArray();
 				}
-				RankBean rank = RankBeanMapper.getSpecificRank(leagues, match.getQueueType());
-
-				ItemBean[] items = ItemBean.playerMatchBeanToItemBean(player, itemEvents.getOrDefault(player.getParticipantId(), new ArrayList<ItemInfo>()), rank);
+				RankBean rank = RankBeanMapper.getSpecificRank(league, match.getQueueType());
 				
+				ItemBean[] items = ItemBean.playerMatchBeanToItemBean(player, rank);
+				MasteryAggregateBean[] masteries = MasteryAggregateBean.playerMatchBeanToMasteryAggregateBean(player, rank);
+				RuneAggregateBean[] runes = RuneAggregateBean.playerMatchBeanToRuneAggregateBean(player, rank);
 				//Map<String, RankBean> rankedMap = RankBeanMapper.simplifyBean(leagues); no need for a map right now
 				ChampionBean champ = ChampionBean.playerMatchBeanToChampBean(player, rank);
 				if(connection.insertJson(BeanParser.parseAnyBean(player), region + "_collection_player", PlayerMatchBean.queryParams)){
@@ -202,7 +199,15 @@ public class BetaServlet extends HttpServlet {
 					for(ItemBean item : items){
 						connection.incrementJson(BeanParser.parseAnyBean(item), region + "_collection_item", ItemBean.queryParams, ItemBean.removeParams, false);
 					}
+					for(MasteryAggregateBean mastery : masteries){
+						connection.incrementJson(BeanParser.parseAnyBean(mastery), region + "_collection_mastery", MasteryAggregateBean.queryParams, MasteryAggregateBean.removeParams, false);
+					}
+					for(RuneAggregateBean rune : runes){
+						connection.incrementJson(BeanParser.parseAnyBean(rune), region + "_collection_rune", RuneAggregateBean.queryParams, RuneAggregateBean.removeParams, false);
+					}
 				}
+				else if(KILL_UPON_DUPLICATE)//we are done here - IMPLEMENTATION-WISE
+					i = matches.length();
 			}
 			TeamBean[] teams = matchPackage.getTeams();
 			for(TeamBean team : teams){
@@ -212,64 +217,45 @@ public class BetaServlet extends HttpServlet {
 		long end = System.nanoTime();
 		System.out.println("successful! Time: " + (end - start)/1000000000);
 	}
-	/*private void manageMatchHistory(HttpServletRequest request, HttpServletResponse response) throws IOException{
-		JSONObject json = readRequest(request);
-		int playerId = json.getInt("playerId");
-		String region = json.getString("region");
-		int sortBy = json.getInt("sortType");
-		//if(connection.getRegion().split("_")[0]//if regions aren't matching, we have to change database collection
-		//read in JSON into the obj, we know its approximate architecture, so take each game out
-		JSONArray arr = json.getJSONArray("games");
-		BeanParser<PlayerGameBean> parser = new BeanParser<PlayerGameBean>(PlayerGameBean.class);
-		JSONArray rank = json.getJSONArray("rank");
-		Map<String, RankBean> rankMap = RankBeanMapper.SimplifyBean(rank);
-		for(int i = 0; i < arr.length(); i++){
-			JSONObject game = arr.getJSONObject(i);
-			PlayerGameBean gameBean = new PlayerGameBean(game, playerId, region);
-			BasicDBObject dbobj = parser.parseBean(gameBean);
-			System.out.println(dbobj);
-			if(connection.insertJson(dbobj, rankMap))
-				System.out.println("inserted");
-			else
-				System.out.println("not inserted - duplicate!!");
-		}
-		PrintWriter out = response.getWriter();
-		//create Json Object
-		Map<Integer, Stats> map = queryPlayerHistory(playerId, sortBy);
-		Gson gson = new Gson();
-		// finally output the json string   
-		System.out.println(gson.toJson(map));
-	    out.print(gson.toJson(map));
+	public void queryForItem(JSONObject info, HttpServletResponse response){
+		ArrayList<BasicDBObject> dbObjs = queryForAggregate(info, "_collection_item");
+		BasicDBObject[] arrayOfObjs = dbObjs.toArray(new BasicDBObject[dbObjs.size()]);
+		sendJsonToServer(response, arrayOfObjs);
 	}
-	
-	public void manageWeeklyAvg(HttpServletRequest req, HttpServletResponse res){
-		int championId;
-		String region = "";
-		int filterOption, rankSelect, divSelect;
-		try{
-			System.out.println(req.getParameter("championId"));
-			championId = Integer.parseInt(req.getParameter("championId"));
-			filterOption = Integer.parseInt(req.getParameter("filterOption"));
-			rankSelect = Integer.parseInt(req.getParameter("rankSelect"));
-			divSelect = Integer.parseInt(req.getParameter("divSelect"));
-		}catch(NumberFormatException e){
-			return;
+	public void queryForChamp(JSONObject info, HttpServletResponse response){
+		ArrayList<BasicDBObject> dbObjs = queryForAggregate(info, "_collection_champ");
+		BasicDBObject[] arrayOfObjs = dbObjs.toArray(new BasicDBObject[dbObjs.size()]);
+		sendJsonToServer(response, arrayOfObjs);
+	}
+	public void queryForMasteries(JSONObject info, HttpServletResponse response){
+		ArrayList<BasicDBObject> dbObjs = queryForAggregate(info, "_collection_mastery");
+		BasicDBObject[] arrayOfObjs = dbObjs.toArray(new BasicDBObject[dbObjs.size()]);
+		sendJsonToServer(response, arrayOfObjs);
+	}
+	public void queryForRunes(JSONObject info, HttpServletResponse response){
+		ArrayList<BasicDBObject> dbObjs = queryForAggregate(info, "_collection_runes");
+		BasicDBObject[] arrayOfObjs = dbObjs.toArray(new BasicDBObject[dbObjs.size()]);
+		sendJsonToServer(response, arrayOfObjs);
+	}
+	public ArrayList<BasicDBObject> queryForAggregate(JSONObject info, String postfix){
+		ArrayList<String> queryParams = ItemBean.getQueryParams();
+		BasicDBObject query = new BasicDBObject();
+		String region = info.getString("region");
+		for(String queryParam : queryParams){
+			if(queryParam != null)
+				query.put(queryParam, info.get(queryParam));
 		}
-		region = req.getParameter("region");
-		ArrayList<ChampionBean> bean = connection.queryChampion(championId, region, new RankBean(rankSelect, divSelect), filterOption, Calendar.getInstance().get(Calendar.WEEK_OF_YEAR), Calendar.getInstance().get(Calendar.YEAR));
-		Gson gson = new Gson();
+		return connection.queryJson(query, region+postfix);
+	}
+	public void sendJsonToServer(HttpServletResponse response, BasicDBObject[] arrayOfObjs){
 		try {
-			PrintWriter out = res.getWriter();
-			out.print(gson.toJson(bean));
-			System.out.println(gson.toJson(bean));
+			PrintWriter out = response.getWriter();
+			out.write((new Gson()).toJson(arrayOfObjs));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-	public Map<Integer, Stats> queryPlayerHistory(int playerId, int sort){
-		ArrayList<PlayerGameBean> charList = connection.queryJson(playerId);
-		PlayerStatAnalyzer analyzer = new PlayerStatAnalyzer(charList, sort);
-		Map<Integer, Stats> map = analyzer.calculateStats();
-		return map;
-	}*/
+	public void destroy() {
+	    connection.closeConnection();
+	  }
 }

@@ -34,10 +34,6 @@ public class ItemBean{
 	int assists;
 	int deaths;
 	int kills;
-	int timePurchased;
-	int qtyPurchased;
-	int timeDestroyed;
-	int qtyDestroyed;
 	int wins;
 	/*roles and lanes*/
 	int top;
@@ -67,7 +63,7 @@ public class ItemBean{
 
 	
 	public ItemBean(int itemId, int rank, int division, int championId, int assists, int deaths, int kills,
-			int timePurchased, int qtyPurchased, int timeDestroyed, int qtyDestroyed, int wins, HashMap<String, Integer> laneQty, HashMap<String, Integer> roleQty, int qty,
+			int wins, HashMap<String, Integer> laneQty, HashMap<String, Integer> roleQty, int qty,
 			int trueDamageTaken, int magicDamageTaken, int physicalDamageTaken, int totalDamageTaken,
 			int magicDamageDealtToChampions, int physicalDamageDealtToChampions, int totalDamageDealtToChampions,
 			int trueDamageDealtToChampions, int weekDate, int yearDate) {
@@ -79,10 +75,6 @@ public class ItemBean{
 		this.assists = assists;
 		this.deaths = deaths;
 		this.kills = kills;
-		this.timePurchased = timePurchased;
-		this.qtyPurchased = qtyPurchased;
-		this.timeDestroyed = timeDestroyed;
-		this.qtyDestroyed = qtyDestroyed;
 		this.wins = wins;
 		this.top = laneQty.getOrDefault("TOP", 0);
 		this.middle = laneQty.getOrDefault("MIDDLE", 0);
@@ -108,9 +100,8 @@ public class ItemBean{
 		this.yearDate = yearDate;
 	}
 
-	public static ItemBean[] playerMatchBeanToItemBean(PlayerMatchBean bean, List<ItemInfo> items, RankBean rankBean){
+	public static ItemBean[] playerMatchBeanToItemBean(PlayerMatchBean bean, RankBean rankBean){
 		List<ItemBean> beans = new ArrayList<>();
-		
 		int qty = 1;
 		int championId = bean.getChampionId();
 		
@@ -141,26 +132,11 @@ public class ItemBean{
 		HashMap<String, Integer> roleQty = new HashMap<String, Integer>();
 		roleQty.put(bean.getTimeline().getRole(), 1);
 		
-		int timePurchased = 0;
-		int timeDestroyed = 0;
-		int qtyPurchased = 0;
-		int qtyDestroyed = 0;
-		for(int i = 0; i < items.size(); i++){
-			ItemInfo item = items.get(i);
-			
-			int timestamp = item.getTimestamp();
-			int itemId = item.getItemId();
-			String type = item.getType();
-			if(type.equals("ITEM_DESTROYED")){
-				qtyDestroyed++;
-				timePurchased += timestamp;
-			}
-			if(type.equals("ITEM_PURCHASED")){
-				timeDestroyed += timestamp;
-				qtyPurchased++;
-			}
-			beans.add(new ItemBean( itemId,  rank,  division,  championId,  assists,  deaths,  kills,
-					 timePurchased,  qtyPurchased,  timeDestroyed,  qtyDestroyed,  wins, laneQty, roleQty,  qty,
+		int[] items = bean.getItems();
+		for(int i = 0; i < items.length; i++){
+			int itemId = items[i];
+			beans.add(new ItemBean( itemId,  rank,  division,  championId,  
+					 assists,  deaths,  kills, wins, laneQty, roleQty,  qty,
 					 trueDamageTaken,  magicDamageTaken,  physicalDamageTaken,  totalDamageTaken,
 					 magicDamageDealtToChampions,  physicalDamageDealtToChampions,  totalDamageDealtToChampions,
 					 trueDamageDealtToChampions,  weekDate,  yearDate));
@@ -224,14 +200,6 @@ public class ItemBean{
 		this.kills = kills;
 	}
 
-	public int getTimePurchased() {
-		return timePurchased;
-	}
-
-	public void setTimePurchased(int timePurchased) {
-		this.timePurchased = timePurchased;
-	}
-	
 	public static ArrayList<String> getQueryParams() {
 		return queryParams;
 	}
@@ -239,23 +207,6 @@ public class ItemBean{
 	public static void setQueryParams(ArrayList<String> queryParams) {
 		ItemBean.queryParams = queryParams;
 	}
-
-	public int getQtyPurchased() {
-		return qtyPurchased;
-	}
-
-	public void setQtyPurchased(int qtyPurchased) {
-		this.qtyPurchased = qtyPurchased;
-	}
-
-	public int getQtyDestroyed() {
-		return qtyDestroyed;
-	}
-
-	public void setQtyDestroyed(int qtyDestroyed) {
-		this.qtyDestroyed = qtyDestroyed;
-	}
-
 	public int getTop() {
 		return top;
 	}
@@ -400,13 +351,6 @@ public class ItemBean{
 		this.trueDamageDealtToChampions = trueDamageDealtToChampions;
 	}
 
-	public int getTimeDestroyed() {
-		return timeDestroyed;
-	}
-
-	public void setTimeDestroyed(int timeDestroyed) {
-		this.timeDestroyed = timeDestroyed;
-	}
 	public int getWins() {
 		return wins;
 	}

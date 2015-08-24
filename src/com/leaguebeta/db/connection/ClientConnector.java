@@ -232,102 +232,7 @@ public class ClientConnector {
 	 * @param rank, the rank of the player's game
 	 * @return boolean, true if there were no errors in the insertion/update
 	 */
-	public boolean insertItems(BasicDBObject bean, RankBean rank){
-		List<BasicDBObject> query = new ArrayList<BasicDBObject>();
-		DBCollection tempCol = db.getCollection(collection.getName()+ "_item");
-		BasicDBList list = (BasicDBList) bean.get("itemsID");
-		for(int i = 0; i < list.size(); i++){
-			BasicDBObject obj = new BasicDBObject();
-			obj.put("itemId", list.get(i));
-			obj.put("weekDate",bean.get("weekDate"));
-			obj.put("yearDate",bean.get("yearDate"));
-			obj.put("rank", rank.getRank());
-			obj.put("division", rank.getDivision());
-			query.add(obj);
-		}
-		for(int i = 0; i < list.size(); i++){
-			BasicDBObject q = query.get(i);
-			DBCursor cursor = tempCol.find(q);
-			int win = ((boolean) bean.get("win")) ? 1 : 0;
-			if(cursor.hasNext()){//if this entry does exist
-				BasicDBObject incDoc = 
-						new BasicDBObject().append("$inc", 
-						new BasicDBObject()
-							.append("kills", bean.get("championsKilled"))
-							.append("assists", bean.get("assists"))
-							.append("deaths", bean.get("numDeaths"))
-							.append("qty", 1)
-							.append("wins", win));
-				tempCol.update(q, incDoc);
-				System.out.println("updated item data!");
-			}
-			else{//if doesn't, just add a new obj
-				BasicDBObject dbObj = new BasicDBObject();
-				dbObj.append("itemId", list.get(i));
-				dbObj.append("kills", bean.get("championsKilled"));
-				dbObj.append("assists", bean.get("assists"));
-				dbObj.append("deaths", bean.get("numDeaths"));
-				dbObj.append("qty", 1);
-				dbObj.append("weekDate", bean.get("weekDate"));
-				dbObj.append("yearDate", bean.get("yearDate"));
-				dbObj.append("wins", win);
-				dbObj.append("rank", rank.getRank());
-				dbObj.append("division", rank.getDivision());
-				tempCol.insert(dbObj);
-				System.out.println("inserted item data!");
-			}
-		}
-		return true;
-	}   
-//	/**
-//	 * Inserts champion info into the database, formatted to ChampionBeans
-//	 * @param bean entire Json object of PlayerGameBean
-//	 * @param rank the rank of the player's game
-//	 * @return boolean true if there were no errors in the insertion/update
-//	 */
-//	public boolean insertChampion(BasicDBObject bean, RankBean rank, ){
-//		BasicDBObject query = new BasicDBObject();
-//		DBCollection tempCol = db.getCollection(collection.getName()+"_champ");
-//		query.put("championId", bean.get("championId"));
-//		query.put("weekDate", bean.get("weekDate"));
-//		query.put("yearDate", bean.get("yearDate"));
-//		query.put("rank", rank.getRank());
-//		query.put("division", rank.getDivision());
-//		DBCursor cursor = tempCol.find(query);
-//		int win = ((boolean) bean.get("win")) ? 1 : 0;
-//		System.out.println(bean.getBoolean("wins"));
-//		if(cursor.hasNext()){//if this entry does exist
-//			BasicDBObject incDoc = 
-//					new BasicDBObject().append("$inc", 
-//					new BasicDBObject()
-//						.append("kills", bean.get("championsKilled"))
-//						.append("assists", bean.get("assists"))
-//						.append("deaths", bean.get("numDeaths"))
-//						.append("qty", 1)
-//						.append("wins", win));
-//			//updating database
-//			tempCol.update(query, incDoc);
-//			System.out.println("updated champion data!");
-//			return true;
-//			//now we have the updated version - return the dbobject as a json
-//		}
-//		else{//if doesn't, just add a new obj
-//			BasicDBObject dbObj = new BasicDBObject();
-//			dbObj.append("championId", bean.get("championId"));
-//			dbObj.append("kills", bean.get("championsKilled"));
-//			dbObj.append("assists", bean.get("assists"));
-//			dbObj.append("deaths", bean.get("numDeaths"));
-//			dbObj.append("qty", 1);
-//			dbObj.append("weekDate", bean.get("weekDate"));
-//			dbObj.append("yearDate", bean.get("yearDate"));
-//			dbObj.append("wins", win);
-//			dbObj.append("rank", rank.getRank());
-//			dbObj.append("division", rank.getDivision());
-//			tempCol.insert(dbObj);
-//			System.out.println("inserted champion data!");
-//			return true;
-//		}
-//	}
+	
 	/**
 	 * queries a champion by the region rank limits(comes with filter options in bounds) and date
 	 * @param championId int Id 
@@ -430,6 +335,9 @@ public class ClientConnector {
 		and.add(startDate);
 		and.add(endDate);
 		return new BasicDBObject("$and", and);
+	}
+	public BasicDBObject generateDurationRangeQuery(long timeEnd){
+		return new BasicDBObject("$lte", new BasicDBObject("matchDuration", timeEnd));
 	}
 	/**
 	 * Creates an index for easy accessing database indices, so far takes care of _collection, _champ, _item

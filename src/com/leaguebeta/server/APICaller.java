@@ -34,6 +34,8 @@ public class APICaller {
 					return "404";
 				if(response.getStatus() == 429)
 					return "429";
+				if(response.getStatus() == 503)
+					return "503";
 			}
 
 			String output = response.getEntity(String.class);
@@ -55,6 +57,7 @@ public class APICaller {
 			return new JSONObject(res.getJson());
 		}
 		catch(Exception e){
+			System.out.println(res.getJson());
 			e.printStackTrace();
 		}
 		return null;
@@ -78,7 +81,7 @@ public class APICaller {
 		}
 		return null;
 	}
-	public JSONObject callRiotLeague(String region, int summonerID){
+	public JSONObject callRiotLeague(String region, String summonerID){
 		String url = "https://" + region + ".api.pvp.net/api/lol/" + 
 				region + "/v2.5/league/by-summoner/" + summonerID + "/entry?api_key=" + API_KEY;
 		ResponseObject res = null;
@@ -110,7 +113,7 @@ public class APICaller {
 	}
 	public JSONObject callRiotMatchHistory(String region, String name){
 		String url = "https://" + region + ".api.pvp.net/api/lol/" + 
-				region + "/v1.4/summoner/by-name/" + name + "?api_key=" + API_KEY;
+				region + "/v2.2/matchhistory/" + name + "?api_key=" + API_KEY;
 		ResponseObject res = sync.tryRequest(this, url);
 		if(!res.isRetrieved())
 			return null;

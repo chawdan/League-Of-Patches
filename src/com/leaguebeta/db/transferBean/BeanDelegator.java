@@ -235,85 +235,83 @@ public class BeanDelegator {
 		String region = json.getString("region");	//	string	Region where the match was played
 		String season = json.getString("season");	//	string	Season match was played (Legal values: PRESEASON3, SEASON3, PRESEASON2014, SEASON2014, PRESEASON2015, SEASON2015)
 		MatchBean match = new MatchBean();
-		JSONObject timeline = json.optJSONObject("timeline");
-		if(!(timeline == null)){/*that means the rest were all valued*/
-			JSONArray frames = timeline.optJSONArray("frames");
-			int frameInterval = timeline.optInt("frameInterval");
-			List<HashMap<String, Object>> eventBeans = new ArrayList<HashMap<String, Object>>();
-			List<ParticipantFrameBean> participants = new ArrayList<ParticipantFrameBean>();
-			for(int i = 0; i < frames.length(); i++){
-				JSONObject frame = frames.getJSONObject(i);
-				
-				int timeStamp = frame.getInt("timestamp"); //<-- this is not necessary - we already have frameInterval. keep it here for now.
-				
-				JSONArray events = frame.optJSONArray("events");//list
-				JSONObject participantFrames = frame.optJSONObject("participantFrames");//map	
-				Iterator<?> keys = participantFrames.keys();
-				/* Taking care of EventBean */
-				if(events != null){
-					for(int j = 0; j < events.length(); j++){
-						JSONObject eventObj = events.getJSONObject(j);
-						Iterator<?> eventKeys = eventObj.keys();
-						//String ascendedType = eventObj.optString("ascendedType");	//	string	The ascended type of the event. Only present if relevant. Note that CLEAR_ASCENDED refers to when a participants kills the ascended player. (Legal values: CHAMPION_ASCENDED, CLEAR_ASCENDED, MINION_ASCENDED)
-						//JSONArray assistArray = eventObj.optJSONArray("assistingParticipantIds");	//	List[int]	The assisting participant IDs of the event. Only present if relevant.
-						
-						//int[] assistingParticipantIds = null;
-						HashMap<String, Object> eventMap = new HashMap<String, Object>();
-						while(eventKeys.hasNext()){
-							String key = (String) eventKeys.next();
-							Object value = eventObj.get(key);
-						
-							if(value instanceof JSONObject && key.equals("position")){
-								JSONObject pos = (JSONObject)value;
-								eventMap.put(key, new PositionBean(pos.getInt("x"), pos.getInt("y")));
-							}
-							else if(value instanceof JSONArray && key.equals("assistingParticipantIds")){
-								JSONArray arr = ((JSONArray) value);
-								int[] ids = new int[arr.length()];
-								for(int k = 0; k < arr.length(); k++){
-									ids[k] = arr.getInt(k);
-								}
-								eventMap.put(key, ids);
-							}
-							else
-								eventMap.put(key, value);	
-						}
-						eventBeans.add(eventMap);
-					}
-				}
-				
-				/*taking care of ParticipantFrameBean*/
-				while(keys.hasNext()){
-					String key = (String)keys.next();
-					//key is the participantId, but not needed
-					JSONObject obj = participantFrames.getJSONObject(key);
-					int currentGold = obj.optInt("currentGold");	//	int	Participant's current gold
-					int dominionScore = obj.optInt("dominionScore");	//	int	Dominion score of the participant
-					int jungleMinionsKilled = obj.optInt("jungleMinionsKilled");	//	int	Number of jungle minions killed by participant
-					int level = obj.optInt("level");	//	int	Participant's current level
-					int minionsKilled = obj.optInt("minionsKilled");	//	int	Number of minions killed by participant
-					int participantId = obj.optInt("participantId");	//	int	Participant ID
-					JSONObject positionObj = obj.optJSONObject("position");	//	Position	Participant's position
-					PositionBean position = new PositionBean(-1, -1);	//means unavailable - null position!
-					if(positionObj != null)
-						position = new PositionBean(positionObj.getInt("x"), positionObj.getInt("y"));
-					int teamScore = obj.optInt("teamScore");	//	int	Team score of the participant
-					int totalGold = obj.optInt("totalGold");	//	int	Participant's total gold
-					int xp = obj.optInt("xp");	//	int	Experience earned by participant
-					
-					participants.add(new ParticipantFrameBean(currentGold, dominionScore, jungleMinionsKilled, level, minionsKilled,
-							participantId, position, teamScore, totalGold, xp, timeStamp));
-				}
-			}
+//		JSONObject timeline = json.optJSONObject("timeline");
+//		if(!(timeline == null)){/*that means the rest were all valued*/
+//			JSONArray frames = timeline.optJSONArray("frames");
+//			int frameInterval = timeline.optInt("frameInterval");
+//			List<HashMap<String, Object>> eventBeans = new ArrayList<HashMap<String, Object>>();
+//			List<ParticipantFrameBean> participants = new ArrayList<ParticipantFrameBean>();
+//			for(int i = 0; i < frames.length(); i++){
+//				JSONObject frame = frames.getJSONObject(i);
+//				
+//				int timeStamp = frame.getInt("timestamp"); //<-- this is not necessary - we already have frameInterval. keep it here for now.
+//				
+//				JSONArray events = frame.optJSONArray("events");//list
+//				JSONObject participantFrames = frame.optJSONObject("participantFrames");//map	
+//				Iterator<?> keys = participantFrames.keys();
+//				/* Taking care of EventBean */
+//				if(events != null){
+//					for(int j = 0; j < events.length(); j++){
+//						JSONObject eventObj = events.getJSONObject(j);
+//						Iterator<?> eventKeys = eventObj.keys();
+//						//String ascendedType = eventObj.optString("ascendedType");	//	string	The ascended type of the event. Only present if relevant. Note that CLEAR_ASCENDED refers to when a participants kills the ascended player. (Legal values: CHAMPION_ASCENDED, CLEAR_ASCENDED, MINION_ASCENDED)
+//						//JSONArray assistArray = eventObj.optJSONArray("assistingParticipantIds");	//	List[int]	The assisting participant IDs of the event. Only present if relevant.
+//						
+//						//int[] assistingParticipantIds = null;
+//						HashMap<String, Object> eventMap = new HashMap<String, Object>();
+//						while(eventKeys.hasNext()){
+//							String key = (String) eventKeys.next();
+//							Object value = eventObj.get(key);
+//						
+//							if(value instanceof JSONObject && key.equals("position")){
+//								JSONObject pos = (JSONObject)value;
+//								eventMap.put(key, new PositionBean(pos.getInt("x"), pos.getInt("y")));
+//							}
+//							else if(value instanceof JSONArray && key.equals("assistingParticipantIds")){
+//								JSONArray arr = ((JSONArray) value);
+//								int[] ids = new int[arr.length()];
+//								for(int k = 0; k < arr.length(); k++){
+//									ids[k] = arr.getInt(k);
+//								}
+//								eventMap.put(key, ids);
+//							}
+//							else
+//								eventMap.put(key, value);	
+//						}
+//						eventBeans.add(eventMap);
+//					}
+//				}
+//				
+//				/*taking care of ParticipantFrameBean*/
+//				while(keys.hasNext()){
+//					String key = (String)keys.next();
+//					//key is the participantId, but not needed
+//					JSONObject obj = participantFrames.getJSONObject(key);
+//					int currentGold = obj.optInt("currentGold");	//	int	Participant's current gold
+//					int dominionScore = obj.optInt("dominionScore");	//	int	Dominion score of the participant
+//					int jungleMinionsKilled = obj.optInt("jungleMinionsKilled");	//	int	Number of jungle minions killed by participant
+//					int level = obj.optInt("level");	//	int	Participant's current level
+//					int minionsKilled = obj.optInt("minionsKilled");	//	int	Number of minions killed by participant
+//					int participantId = obj.optInt("participantId");	//	int	Participant ID
+//					JSONObject positionObj = obj.optJSONObject("position");	//	Position	Participant's position
+//					PositionBean position = new PositionBean(-1, -1);	//means unavailable - null position!
+//					if(positionObj != null)
+//						position = new PositionBean(positionObj.getInt("x"), positionObj.getInt("y"));
+//					int teamScore = obj.optInt("teamScore");	//	int	Team score of the participant
+//					int totalGold = obj.optInt("totalGold");	//	int	Participant's total gold
+//					int xp = obj.optInt("xp");	//	int	Experience earned by participant
+//					
+//					participants.add(new ParticipantFrameBean(currentGold, dominionScore, jungleMinionsKilled, level, minionsKilled,
+//							participantId, position, teamScore, totalGold, xp, timeStamp));
+//				}
+//			}
 			match = new MatchBean( mapId,  matchCreation,  matchDuration,  matchId,  matchMode,
-					 matchType,  matchVersion,  platformId,  queueType,  region,  season,
-					 eventBeans.toArray(new HashMap[eventBeans.size()]),  participants.toArray(new ParticipantFrameBean[participants.size()]));
-		}
-		else{//if timeline was not selected to be true
-			match = new MatchBean( mapId,  matchCreation,  matchDuration,  matchId,  matchMode,
-					 matchType,  matchVersion,  platformId,  queueType,  region,  season,
-					 null, null);
-		}
+					 matchType,  matchVersion,  platformId,  queueType,  region,  season);
+//		}
+//		else{//if timeline was not selected to be true
+//			match = new MatchBean( mapId,  matchCreation,  matchDuration,  matchId,  matchMode,
+//					 matchType,  matchVersion,  platformId,  queueType,  region,  season);
+//		}
 		return new MatchPackageBean(match, players, teams);
 	}
 	public static int loadJsonInt(String param, JSONObject json){

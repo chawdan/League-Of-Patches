@@ -53,7 +53,7 @@ function fetchMatchHistory(json){
 	var jsonQuery = {};
 	jsonQuery["playerId"] = summonerID;
     jsonQuery["region"] = region;
-    jsonQuery["includeTimeline"] = true,
+    jsonQuery["includeTimeline"] = false,
     jsonQuery["rankedQueues"] = ["RANKED_SOLO_5x5"];
     jsonQuery["seasons"] = ["SEASON2015", "PRESEASON2015"];
     alert("hi");
@@ -111,7 +111,6 @@ function fetchPlayerRankings(summonerID, region, callback){
         }
 	});
 }
-
 /*function testCall(){
 	$.ajax({
 		url:"" ,
