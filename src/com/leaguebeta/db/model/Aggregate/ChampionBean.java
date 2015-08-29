@@ -20,12 +20,14 @@ public class ChampionBean{
 		queryParams.add("yearDate");
 		queryParams.add("rank");
 		queryParams.add("division");
+		queryParams.add("matchDuration");
 		
 		removeParams.add("championId");
 		removeParams.add("rank");
 		removeParams.add("division");
 		removeParams.add("weekDate");
 		removeParams.add("yearDate");
+		removeParams.add("matchDuration");
 	}
 	int qty;
 	int championId;
@@ -72,6 +74,8 @@ public class ChampionBean{
 	double	xpDiffPerMinDeltasZeroToTen;	double	xpDiffPerMinDeltasTenToTwenty;	double	xpDiffPerMinDeltasTwentyToThirty;	double	xpDiffPerMinDeltasThirtyToEnd;	
 	double	xpPerMinDeltasZeroToTen;	double	xpPerMinDeltasTenToTwenty;	double	xpPerMinDeltasTwentyToThirty;	double	xpPerMinDeltasThirtyToEnd;
 	
+	int zeroToTen, tenToTwenty, twentyToThirty, thirtyToEnd;
+	
 	/*frameTime*/
 	int currentGoldZeroToTen, currentGoldTenToTwenty, currentGoldTwentyToThirty, currentGoldThirtyToEnd;
 	int totalGoldZeroToTen, totalGoldTenToTwenty, totalGoldTwentyToThirty, totalGoldThirtyToEnd;
@@ -86,6 +90,8 @@ public class ChampionBean{
 	
 	/*time flag*/
 	int weekDate, yearDate;
+	int matchDuration; // 0 for 0-10 minutes, 1 for 10-20 minutes, 2 for 20-30 minutes, 3 for 30-40 minutes, 4 for 40-50 minutes, and so on.
+
 	/*You should not have a blank constructor for this bean*/
 	
 	public ChampionBean(int qty, int championId, int rank, int division, int assists, int deaths, int kills,
@@ -97,7 +103,8 @@ public class ChampionBean{
 			ParticipantTimelineDataBean csDiffPerMinDeltas, ParticipantTimelineDataBean damageTakenDiffPerMinDeltas,
 			ParticipantTimelineDataBean damageTakenPerMinDeltas, ParticipantTimelineDataBean goldPerMinDeltas,
 			ParticipantTimelineDataBean xpDiffPerMinDeltas, ParticipantTimelineDataBean xpPerMinDeltas, int wins, int largestKillingSpree,
-			int largestCriticalStrike, int weekDate, int yearDate) {
+			int largestCriticalStrike, int weekDate, int yearDate, int matchDuration, int zeroToTen, int tenToTwenty, int twentyToThirty,
+			int thirtyToEnd) {
 		super();
 		this.qty = qty;
 		this.championId = championId;
@@ -180,9 +187,15 @@ public class ChampionBean{
 		this.largestCriticalStrike = largestCriticalStrike;
 		this.weekDate = weekDate;
 		this.yearDate = yearDate;
+		this.matchDuration = matchDuration;
+		
+		this.zeroToTen = zeroToTen;
+		this.tenToTwenty = tenToTwenty;
+		this.twentyToThirty = twentyToThirty;
+		this.thirtyToEnd = thirtyToEnd;
 	}
 
-	public static ChampionBean playerMatchBeanToChampBean(PlayerMatchBean bean, RankBean rankBean){
+	public static ChampionBean playerMatchBeanToChampBean(PlayerMatchBean bean, RankBean rankBean, long matchLength){
 		int qty = 1;
 		int championId = bean.getChampionId();
 		
@@ -220,6 +233,17 @@ public class ChampionBean{
 		ParticipantTimelineDataBean	xpPerMinDeltas = bean.getTimeline().getXpPerMinDeltas();
 		
 		/*avg win rate and stats*/
+		int matchDur = (int)matchLength/60/10;
+		int zeroToTen = 0, tenToTwenty = 0, twentyToThirty = 0, thirtyToEnd= 0;
+		if(matchDur > -1) //zeroToTen
+			zeroToTen++;
+		if(matchDur > 0) //tenToTwenty
+			tenToTwenty++;
+		if(matchDur > 1) //twentyToThirty
+			twentyToThirty++;
+		else
+			thirtyToEnd++;
+
 		int wins = bean.isWinner() ? 1 : 0;
 		int largestKillingSpree = bean.getLargestKillingSpree();
 		int largestCriticalStrike = bean.getLargestCriticalStrike();
@@ -253,7 +277,7 @@ public class ChampionBean{
 				 csDiffPerMinDeltas,  damageTakenDiffPerMinDeltas,
 				 damageTakenPerMinDeltas,  goldPerMinDeltas,
 				 xpDiffPerMinDeltas,  xpPerMinDeltas,  wins,  largestKillingSpree,
-				 largestCriticalStrike,	 weekDate,  yearDate);
+				 largestCriticalStrike,	 weekDate,  yearDate, matchDur, zeroToTen, tenToTwenty, twentyToThirty, thirtyToEnd);
 	}
 
 	public int getRank() {

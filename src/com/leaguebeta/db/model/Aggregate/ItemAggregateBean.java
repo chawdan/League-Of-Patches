@@ -5,170 +5,102 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.leaguebeta.db.model.Participant.PlayerMatchBean;
-import com.leaguebeta.db.model.Participant.RuneBean;
 
-public class RuneAggregateBean {
+public class ItemAggregateBean {
 	public static transient ArrayList<String> queryParams, removeParams;
-
-	static {
+	static{
 		queryParams = new ArrayList<String>();
 		removeParams = new ArrayList<String>();
-
-		queryParams.add("runeId");
-		queryParams.add("championId");
+		
+		queryParams.add("itemId");
 		queryParams.add("weekDate");
 		queryParams.add("yearDate");
-		queryParams.add("rank");
-		queryParams.add("division");
-		queryParams.add("matchDuration");
-
-		removeParams.add("runeId");
-		removeParams.add("rank");
-		removeParams.add("division");
+		
 		removeParams.add("weekDate");
 		removeParams.add("yearDate");
-		removeParams.add("matchDuration");
-		removeParams.add("championId");
-
+		removeParams.add("itemId");
 	}
-
-	/* avg win rate and stats */
-	int wins;
-
-	int qty;
-	int runeId;
-	int championId;
-
-	/* kda avg */
-	int rank;
-	int division;
+	/*intended to be singleton in the database*/
+	int itemId;
+	/* HashMap<Champion ID, amount of x */
 	int assists;
 	int deaths;
 	int kills;
-
-	int qtyUsed;// difference in that this can be more than qty because you can
-				// use same rune in same page
-
-	/* lanes and roles */
+	int wins;
+	/*roles and lanes*/
 	int top;
 	int mid;
 	int middle;
 	int bot;
 	int jungle;
-
+	
 	int duo;
 	int none;
 	int solo;
 	int duo_carry;
 	int duo_support;
-
-	/* time flag */
+	int qty;
+	
 	int weekDate, yearDate;
-	int matchDuration; // 0 for 0-10 minutes, 1 for 10-20 minutes, 2 for 20-30
-						// minutes, 3 for 30-40 minutes, 4 for 40-50 minutes,
-						// and so on.
 
-	public RuneAggregateBean(int championId, int wins, int qty, int runeId, int rank, int division, int assists,
-			int deaths, int kills, int qtyUsed, HashMap<String, Integer> laneQty, HashMap<String, Integer> roleQty,
-			int weekDate, int yearDate, int matchDuration) {
+	public ItemAggregateBean(int itemId, int assists, int deaths, int kills, HashMap<String, Integer>laneQty,
+			HashMap<String, Integer> roleQty, int qty, int weekDate,
+			int yearDate, int wins) {
 		super();
-		this.championId = championId;
-		this.wins = wins;
-		this.qty = qty;
-		this.runeId = runeId;
-		this.rank = rank;
-		this.division = division;
+		this.itemId = itemId;
 		this.assists = assists;
 		this.deaths = deaths;
 		this.kills = kills;
-		this.qtyUsed = qtyUsed;
 		this.top = laneQty.getOrDefault("TOP", 0);
 		this.middle = laneQty.getOrDefault("MIDDLE", 0);
 		this.mid = laneQty.getOrDefault("MID", 0);
 		this.bot = laneQty.getOrDefault("BOTTOM", 0);
 		this.jungle = laneQty.getOrDefault("JUNGLE", 0);
-
+		
 		this.duo = roleQty.getOrDefault("DUO", 0);
 		this.none = roleQty.getOrDefault("NONE", 0);
 		this.solo = roleQty.getOrDefault("SOLO", 0);
 		this.duo_carry = roleQty.getOrDefault("DUO_CARRY", 0);
 		this.duo_support = roleQty.getOrDefault("DUO_SUPPORT", 0);
+		this.wins = wins;
+		this.qty = qty;
 		this.weekDate = weekDate;
 		this.yearDate = yearDate;
-		this.matchDuration = matchDuration;
 	}
-
-	public static RuneAggregateBean[] playerMatchBeanToRuneAggregateBean(PlayerMatchBean bean, RankBean rankBean,
-			long matchLength) {
-		List<RuneAggregateBean> beans = new ArrayList<>();
+	
+	public static ItemAggregateBean[] playerMatchBeanToItemAggregateBean(PlayerMatchBean bean){
+		List<ItemAggregateBean> beans = new ArrayList<>();
 		int qty = 1;
-		int championId = bean.getChampionId();
-
-		/* kda avg */
-		int rank = rankBean.getRank();
-		int division = rankBean.getDivision();
+		
 		int assists = bean.getAssists();
 		int deaths = bean.getDeaths();
 		int kills = bean.getKills();
-		int matchDur = (int) matchLength / 60 / 10;
+		
 		int wins = bean.isWinner() ? 1 : 0;
 
 		int weekDate = bean.getWeekDate();
 		int yearDate = bean.getYearDate();
-
+		
 		HashMap<String, Integer> laneQty = new HashMap<String, Integer>();
 		laneQty.put(bean.getTimeline().getLane(), 1);
 		HashMap<String, Integer> roleQty = new HashMap<String, Integer>();
 		roleQty.put(bean.getTimeline().getRole(), 1);
-
-		RuneBean[] items = bean.getRunes();
-		for (int i = 0; i < items.length; i++) {
-			RuneBean itemId = items[i];
-			beans.add(new RuneAggregateBean(championId, wins, qty, itemId.getRuneId(), rank, division, assists, deaths,
-					kills, itemId.getRuneRank(), laneQty, roleQty, weekDate, yearDate, matchDur));
+		
+		int[] items = bean.getItems();
+		for(int i = 0; i < items.length; i++){
+			int itemId = items[i];
+			beans.add(new ItemAggregateBean( itemId,  assists,  deaths,  kills,  laneQty,  roleQty,  qty,  weekDate,
+					 yearDate, wins));
 		}
-
-		return beans.toArray(new RuneAggregateBean[beans.size()]);
+		return beans.toArray(new ItemAggregateBean[beans.size()]);
 	}
 
-	public int getWins() {
-		return wins;
+	public int getItemId() {
+		return itemId;
 	}
 
-	public void setWins(int wins) {
-		this.wins = wins;
-	}
-
-	public int getQty() {
-		return qty;
-	}
-
-	public void setQty(int qty) {
-		this.qty = qty;
-	}
-
-	public int getRuneId() {
-		return runeId;
-	}
-
-	public void setRuneId(int runeId) {
-		this.runeId = runeId;
-	}
-
-	public int getRank() {
-		return rank;
-	}
-
-	public void setRank(int rank) {
-		this.rank = rank;
-	}
-
-	public int getDivision() {
-		return division;
-	}
-
-	public void setDivision(int division) {
-		this.division = division;
+	public void setItemId(int itemId) {
+		this.itemId = itemId;
 	}
 
 	public int getAssists() {
@@ -195,12 +127,12 @@ public class RuneAggregateBean {
 		this.kills = kills;
 	}
 
-	public int getQtyUsed() {
-		return qtyUsed;
+	public int getWins() {
+		return wins;
 	}
 
-	public void setQtyUsed(int qtyUsed) {
-		this.qtyUsed = qtyUsed;
+	public void setWins(int wins) {
+		this.wins = wins;
 	}
 
 	public int getTop() {
@@ -283,4 +215,28 @@ public class RuneAggregateBean {
 		this.duo_support = duo_support;
 	}
 
+	public int getQty() {
+		return qty;
+	}
+
+	public void setQty(int qty) {
+		this.qty = qty;
+	}
+
+	public int getWeekDate() {
+		return weekDate;
+	}
+
+	public void setWeekDate(int weekDate) {
+		this.weekDate = weekDate;
+	}
+
+	public int getYearDate() {
+		return yearDate;
+	}
+
+	public void setYearDate(int yearDate) {
+		this.yearDate = yearDate;
+	}
+	
 }

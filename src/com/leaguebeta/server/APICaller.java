@@ -1,4 +1,7 @@
 package com.leaguebeta.server;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.PriorityBlockingQueue;
+
 import org.json.JSONObject;
 
 import com.leaguebeta.server.sync.RateLimiter;
@@ -10,6 +13,7 @@ public class APICaller {
 	private static String API_KEY = "d59dcb6a-60f7-48a4-98f5-13b301357701";
 	Client client;
 	RateLimiter sync;
+	BlockingQueue queue   = new PriorityBlockingQueue();
 	/**
 	 * Creates a Singleton ratelimiter as well as a suggested singleton of Client
 	 */
@@ -70,6 +74,7 @@ public class APICaller {
 		if(seasonArray.length() != 0)
 			seasonArray += "&";
 		String url = "https://"+region+".api.pvp.net/api/lol/" + region + "/v2.2/matchlist/by-summoner/" + playerId + "?" + champArray + "" + rankQueues + "" + seasonArray + "api_key=" + API_KEY;
+		System.out.println(url);
 		ResponseObject res = sync.tryRequest(this, url);
 		if(!res.isRetrieved())
 			return null;

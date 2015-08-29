@@ -72,6 +72,26 @@ function fetchMatchHistory(json){
         }
 	});
 }
+function fetchChamp(weekstart, weekend, yearstart, yearend, divisionstart, divisionend, 
+		rankingstart, rankingend, matchDurationStart, matchDurationEnd, championId, region){
+	$.ajax({
+		url: 'League/showAggregateChampion?weekDate='+weekstart+'&weekDate='+weekend+'&yearDate='+yearstart+'&yearDate='+yearend
+			+'&division='+divisionstart+'&division='+divisionend+'&rank='+rankingstart+'&rank='+rankingend+'&matchDuration='
+			+matchDurationStart+'&matchDuration='+matchDurationEnd+'&championId='+championId+"&region="+region,
+		type: 'GET',
+        dataType: 'json',
+        contentType: 'application/json',
+        data: {},
+        success: function (json) {
+        	alert("SUCCESS : " + JSON.stringify(json));
+        	loadDiv(json);
+        },            
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+        	alert("Sending match history failed: " + errorThrown);
+        }
+	})
+	
+}
 /*
 function fetchMatchHistory(json){
 	var summonerID = json.id;

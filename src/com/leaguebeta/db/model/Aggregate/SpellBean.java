@@ -30,4 +30,9 @@ public class SpellBean {
 	int solo;
 	int duo_carry;
 	int duo_support;
+	
+	/*time flag*/
+	int weekDate, yearDate;
+	int matchDuration; // 0 for 0-10 minutes, 1 for 10-20 minutes, 2 for 20-30 minutes, 3 for 30-40 minutes, 4 for 40-50 minutes, and so on.
+	
 }

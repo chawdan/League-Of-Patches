@@ -37,6 +37,12 @@
 </select>
 <input id="name" type="text">
 <button id="getApi" onclick="fetchSummonerID();">Click me!</button>
+<!--  weekstart, weekend, yearstart, yearend, divisionstart, divisionend, rankingstart, rankingend, matchDurationStart, matchDurationEnd, itemId  -->
+<button id="getItem" onclick="fetchItem(20,40,2015,2015,-1,-1,-1,-1,2,3,3143, 'na');"> Click me item! </button>
+<!--  weekstart, weekend, yearstart, yearend, divisionstart, divisionend, rankingstart, rankingend, matchDurationStart, matchDurationEnd, championId -->
+<button id="getChampion" onclick="fetchChamp(20,40,2015,2015,2, 4, 1, 3, 2, 3, 412, 'na')"> Click me champ! </button>
+<button id="getRunes" onclick="fetchRunes(20,40,2015,2015,-1,-1,-1,-1, 2, 3, 3143, 'na');"> Click me rune! </button>
+<button id="getMasteries" onclick="fetchMasteries(20,40,2015,2015,-1,-1,-1,-1,2,3,3143, 'na');"> Click me rune! </button>
 <div id="populateDiv">
 Hello!
 </div>

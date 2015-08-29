@@ -1,4 +1,5 @@
 package com.leaguebeta.server;
+
 import com.google.gson.Gson;
 import com.leaguebeta.dataAnalysis.PlayerStatAnalyzer;
 import com.leaguebeta.dataAnalysis.Stats;
@@ -20,7 +21,12 @@ import com.leaguebeta.db.model.Team.TeamBean;
 import com.leaguebeta.db.transferBean.BeanDelegator;
 import com.leaguebeta.db.transferBean.BeanParser;
 import com.leaguebeta.db.transferBean.RankBeanMapper;
+import com.leaguebeta.server.async.AppAsyncListener;
+import com.leaguebeta.server.async.AsyncRequestProcessor;
+import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
+import com.mongodb.QueryBuilder;
+import com.mongodb.util.JSON;
 
 import net.minidev.json.writer.BeansMapper.Bean;
 
@@ -32,222 +38,217 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
+import javax.servlet.AsyncContext;
+import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.bson.BSONObject;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 /**
  * Servlet implementation class BetaServlet
  */
-@WebServlet(name = "League", urlPatterns = { "/League/*" })
+@WebServlet(name = "League", urlPatterns = { "/League/*" }, asyncSupported = true)
 public class BetaServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private static final boolean KILL_UPON_DUPLICATE = true;
-    ClientConnector connection;
-    APICaller caller;
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public BetaServlet() {
-        super();
-        initializeConnectionPool();
-        caller = new APICaller();
-    }
+	ClientConnector connection;
+	APICaller caller;
+
+	/**
+	 * @see HttpServlet#HttpServlet()
+	 */
+	public BetaServlet() {
+		super();
+		initializeConnectionPool();
+		caller = new APICaller();
+	}
 
 	private void initializeConnectionPool() {
-		connection = new ClientConnector("na");//default is North America
+		connection = new ClientConnector("na");// default is North America
 	}
 
 	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+	 *      response)
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+        request.setAttribute("org.apache.catalina.ASYNC_SUPPORTED", true);
 		String reqURL = request.getPathInfo();
-		switch(reqURL){
-			//Service caching calls
-			case "/showWeeklyAvg":
-				//manageWeeklyAvg(request, response);
-				break;
-			//Rate-Limited API calls
-			case "/callRiotMatch":
-				JSONObject matchJson = caller.callRiotMatch(request.getParameter("region"), 
-													request.getParameter("matchID"),
-													Boolean.getBoolean(request.getParameter("includeTimeLine")));
-				//do other things here
-				System.out.println(matchJson);
-				break;
-			case "/callRiotLeague":
-				JSONObject leagueJson = caller.callRiotLeague(request.getParameter("region"), request.getParameter("summonerId"));
-				break;
-			case "/callRiotSummoner":
-				JSONObject summonerJson = caller.callRiotSummoner(request.getParameter("region"), 
-													request.getParameter("name"));
-				break;
-			default :
-				response.sendRedirect("/");
-				response.getWriter().append("Served at: ").append(request.getContextPath());
-				break;
+		ArrayList<BasicDBObject> answer = null;
+		switch (reqURL) {
+		// Service caching calls
+		case "/showAggregateChampion":
+			BasicDBObject queryChamp = buildDBObjectSkeleton(request);
+			queryChamp.append("championId", Integer.parseInt(request.getParameter("championId")));
+			System.out.println(queryChamp);
+			answer = connection.queryJson(queryChamp, request.getParameter("region")+"_collection_champ", false); //queryChamp, request.getParameter("region")+"_collection_champ");
+			for(BasicDBObject ans : answer){
+				System.out.println(ans);
+			}
+			
+			sendJsonToServer(response, answer.toArray(new BasicDBObject[answer.size()]));
+			break;
+		case "/showAggregateItem":
+			BasicDBObject queryItem = buildDBObjectSkeleton(request);
+			queryItem.append("itemId", Integer.parseInt(request.getParameter("itemId")));
+			queryItem.append("championId", Integer.parseInt(request.getParameter("championId")));
+			System.out.println(queryItem);
+			answer = connection.queryJson(queryItem, request.getParameter("region")+"_collection_item", false);
+			for(BasicDBObject ans : answer){
+				System.out.println(ans);
+			}
+			sendJsonToServer(response, answer.toArray(new BasicDBObject[answer.size()]));
+			break;
+		case "/showAggregateRune":
+			BasicDBObject queryRune = buildDBObjectSkeleton(request);
+			queryRune.append("runeId", request.getParameter("runeId"));
+			queryRune.append("championId", request.getParameter("championId"));
+			System.out.println(queryRune);
+			connection.queryJson(queryRune, request.getParameter("region")+"_collection_rune", false);
+			sendJsonToServer(response, queryRune);
+			break;
+		case "/showAggregateMastery":
+			BasicDBObject queryMastery = buildDBObjectSkeleton(request);
+			queryMastery.append("masteryId", request.getParameter("masteryId"));
+			queryMastery.append("championId", request.getParameter("championId"));
+			System.out.println(queryMastery);
+			connection.queryJson(queryMastery, request.getParameter("region")+"_collection_mastery", false);
+			sendJsonToServer(response, queryMastery);
+			break;
+
+		case "/showWeeklyAvg":
+			// manageWeeklyAvg(request, response);
+			break;
+		// Rate-Limited API calls
+		case "/callRiotMatch":
+			JSONObject matchJson = caller.callRiotMatch(request.getParameter("region"), request.getParameter("matchID"),
+					Boolean.getBoolean(request.getParameter("includeTimeLine")));
+			// do other things here
+			System.out.println(matchJson);
+			break;
+		case "/callRiotLeague":
+			JSONObject leagueJson = caller.callRiotLeague(request.getParameter("region"),
+					request.getParameter("summonerId"));
+			break;
+		case "/callRiotSummoner":
+			JSONObject summonerJson = caller.callRiotSummoner(request.getParameter("region"),
+					request.getParameter("name"));
+			break;
+		default:
+			response.sendRedirect("/");
+			response.getWriter().append("Served at: ").append(request.getContextPath());
+			break;
 		}
 	}
-	
+
+	private static BasicDBObject buildDBObjectSkeleton(HttpServletRequest request){
+		BasicDBObject query = new BasicDBObject();
+		Map<String, String[]> params = request.getParameterMap();
+
+		query.putAll((BSONObject)ClientConnector.generateDateRangeQuery(Integer.parseInt(params.get("weekDate")[0]), 
+				Integer.parseInt(params.get("weekDate")[1]),
+				Integer.parseInt(params.get("yearDate")[0]),
+				Integer.parseInt(params.get("yearDate")[1])));
+		query.putAll((BSONObject)ClientConnector.generateDurationRangeQuery(Integer.parseInt(params.get("matchDuration")[0]), 
+				Integer.parseInt(params.get("matchDuration")[1])));
+		BasicDBObject lowerRank = ClientConnector.generateRankQuery(new RankBean(
+				Integer.parseInt(params.get("rank")[0]), 
+				Integer.parseInt(params.get("division")[0])), 1);
+		BasicDBObject higherRank = ClientConnector.generateRankQuery(new RankBean(
+				Integer.parseInt(params.get("rank")[1]), 
+				Integer.parseInt(params.get("division")[1])), -1);
+		BasicDBList and = new BasicDBList();
+		and.add(lowerRank);
+		and.add(higherRank);
+		query.append("$and", and);
+		query.putAll((BSONObject)ClientConnector.generateDurationRangeQuery(
+				Integer.parseInt(params.get("matchDuration")[0]), 
+				Integer.parseInt(params.get("matchDuration")[1])));
+		System.out.println(query);
+		return query;
+	}
 	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+	 *      response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+        request.setAttribute("org.apache.catalina.ASYNC_SUPPORTED", true);
 		String reqURL = request.getPathInfo();
-		if(reqURL != null){//this means there is an API call using AJAX
+		if (reqURL != null) {// this means there is an API call using AJAX
 			System.out.println(reqURL);
-			switch(reqURL){
-				case "/postMatches":
-					//manageMatchHistory(request, response);//takes care of match history from a summoner, and then 
-					postMatches(readRequest(request), response);
-					break;
-				default://someone tried to access API that does not exist
-					response.sendRedirect("/");
-					break;
+			AsyncContext asyncCtx = null;
+			ThreadPoolExecutor executor = null;
+			switch (reqURL) {
+			case "/postMatches":
+				asyncCtx = request.startAsync();
+		        asyncCtx.addListener(new AppAsyncListener());
+		        executor = (ThreadPoolExecutor) request.getServletContext().getAttribute("executor");
+		        executor.execute(new AsyncRequestProcessor(asyncCtx, caller, connection, AsyncRequestProcessor.READ_MATCHES_FROM_PLAYER));
+				break;
+			case "/postInitialMatches":
+				asyncCtx = request.startAsync();
+				asyncCtx.addListener(new AppAsyncListener());
+		        executor = (ThreadPoolExecutor) request.getServletContext().getAttribute("executor");
+		        executor.execute(new AsyncRequestProcessor(asyncCtx, caller, connection, AsyncRequestProcessor.READ_MATCHES_FROM_LIST));
+				break;
+			default:// someone tried to access API that does not exist
+				response.sendRedirect("/");
+				break;
 			}
 		}
 	}
-	private JSONObject readRequest(HttpServletRequest request){
-		StringBuffer jb = new StringBuffer();
-		String line = null;
-		try {
-			BufferedReader reader = request.getReader();
-			while ((line = reader.readLine()) != null)
-				jb.append(line);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		JSONObject json = null;
-		try {
-			json = new JSONObject(jb.toString());
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-		return json;
-	}
-	private String generateQueryStringArray(String prefix, String arrayName, JSONObject root){
-		try{
-			JSONArray array = root.getJSONArray(arrayName);
-			String[] list = new String[array.length()];
-			for(int i = 0; i < list.length; i++)
-				list[i] = array.getString(i);
-			prefix += String.join(",", list);
-		}catch(Exception e){
-			return "";
-		}
-		return prefix;
-	}
-	private void postMatches(JSONObject info, HttpServletResponse res){
-		int playerId = info.getInt("playerId");
-		String region = info.getString("region");
-		boolean includeTimeline = info.getBoolean("includeTimeline");
-		long start = System.nanoTime();
-		/*read in values for arrays*/
-		String rankQueue = generateQueryStringArray("RankedQueues=", "rankedQueues", info);
-		String season = generateQueryStringArray("seasons=", "seasons", info);
-		String champion = generateQueryStringArray("championIds=", "championIds", info);
-		
-		/*use array values to send more api calls*/
-		JSONObject matchList = caller.callRiotMatchList(playerId, region, rankQueue, season, champion);
-		JSONArray matches = matchList.getJSONArray("matches");
-		JSONObject recentMatches = caller.callRiotMatchHistory(region, ""+playerId);
-		try {
-			PrintWriter out = res.getWriter();
-			out.write((new Gson()).toJson(recentMatches));
-			out.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		for(int i = 0; i < matches.length(); i++){
-			System.out.println("one match processed.");
-			JSONObject value = caller.callRiotMatch(region, ""+matches.getJSONObject(i).getInt("matchId"), includeTimeline);
-			MatchPackageBean matchPackage = BeanDelegator.delegateMatchJson(value);
-			/*create beanparser and send these items into the db as they are initialized*/
-			MatchBean match = matchPackage.getMatch();
-			connection.insertJson(BeanParser.parseAnyBean(match), region + "_collection_match", MatchBean.queryParams);
-			PlayerMatchBean[] players = matchPackage.getPlayers();
-			String[] queryString = new String[players.length];
-			for(int j = 0; j < players.length; j++){
-				queryString[j] = ""+players[j].getSummonerId();
-			}
-			String queryCompound = String.join(",", queryString);
-			JSONObject allLeagues = caller.callRiotLeague(region, queryCompound);
-			for(PlayerMatchBean player : players){
-				//each player has their own rankings - so call the api for it
-				JSONArray league = null;
-				try{
-					league = allLeagues.getJSONArray(""+player.getSummonerId());
-				}catch(JSONException e){
-					league = new JSONArray();
-				}
-				RankBean rank = RankBeanMapper.getSpecificRank(league, match.getQueueType());
-				
-				ItemBean[] items = ItemBean.playerMatchBeanToItemBean(player, rank);
-				MasteryAggregateBean[] masteries = MasteryAggregateBean.playerMatchBeanToMasteryAggregateBean(player, rank);
-				RuneAggregateBean[] runes = RuneAggregateBean.playerMatchBeanToRuneAggregateBean(player, rank);
-				//Map<String, RankBean> rankedMap = RankBeanMapper.simplifyBean(leagues); no need for a map right now
-				ChampionBean champ = ChampionBean.playerMatchBeanToChampBean(player, rank);
-				if(connection.insertJson(BeanParser.parseAnyBean(player), region + "_collection_player", PlayerMatchBean.queryParams)){
-					connection.incrementJson(BeanParser.parseAnyBean(champ), region + "_collection_champ", ChampionBean.queryParams, ChampionBean.removeParams, false);
-					for(ItemBean item : items){
-						connection.incrementJson(BeanParser.parseAnyBean(item), region + "_collection_item", ItemBean.queryParams, ItemBean.removeParams, false);
-					}
-					for(MasteryAggregateBean mastery : masteries){
-						connection.incrementJson(BeanParser.parseAnyBean(mastery), region + "_collection_mastery", MasteryAggregateBean.queryParams, MasteryAggregateBean.removeParams, false);
-					}
-					for(RuneAggregateBean rune : runes){
-						connection.incrementJson(BeanParser.parseAnyBean(rune), region + "_collection_rune", RuneAggregateBean.queryParams, RuneAggregateBean.removeParams, false);
-					}
-				}
-				else if(KILL_UPON_DUPLICATE)//we are done here - IMPLEMENTATION-WISE
-					i = matches.length();
-			}
-			TeamBean[] teams = matchPackage.getTeams();
-			for(TeamBean team : teams){
-				connection.insertJson(BeanParser.parseAnyBean(team), region + "_collection_team", TeamBean.queryParams);
-			}
-		}
-		long end = System.nanoTime();
-		System.out.println("successful! Time: " + (end - start)/1000000000);
-	}
-	public void queryForItem(JSONObject info, HttpServletResponse response){
+
+
+	
+
+	public void queryForItem(JSONObject info, HttpServletResponse response) {
 		ArrayList<BasicDBObject> dbObjs = queryForAggregate(info, "_collection_item");
 		BasicDBObject[] arrayOfObjs = dbObjs.toArray(new BasicDBObject[dbObjs.size()]);
 		sendJsonToServer(response, arrayOfObjs);
 	}
-	public void queryForChamp(JSONObject info, HttpServletResponse response){
+
+	public void queryForChamp(JSONObject info, HttpServletResponse response) {
 		ArrayList<BasicDBObject> dbObjs = queryForAggregate(info, "_collection_champ");
 		BasicDBObject[] arrayOfObjs = dbObjs.toArray(new BasicDBObject[dbObjs.size()]);
 		sendJsonToServer(response, arrayOfObjs);
 	}
-	public void queryForMasteries(JSONObject info, HttpServletResponse response){
+
+	public void queryForMasteries(JSONObject info, HttpServletResponse response) {
 		ArrayList<BasicDBObject> dbObjs = queryForAggregate(info, "_collection_mastery");
 		BasicDBObject[] arrayOfObjs = dbObjs.toArray(new BasicDBObject[dbObjs.size()]);
 		sendJsonToServer(response, arrayOfObjs);
 	}
-	public void queryForRunes(JSONObject info, HttpServletResponse response){
+
+	public void queryForRunes(JSONObject info, HttpServletResponse response) {
 		ArrayList<BasicDBObject> dbObjs = queryForAggregate(info, "_collection_runes");
 		BasicDBObject[] arrayOfObjs = dbObjs.toArray(new BasicDBObject[dbObjs.size()]);
 		sendJsonToServer(response, arrayOfObjs);
 	}
-	public ArrayList<BasicDBObject> queryForAggregate(JSONObject info, String postfix){
+
+	public ArrayList<BasicDBObject> queryForAggregate(JSONObject info, String postfix) {
 		ArrayList<String> queryParams = ItemBean.getQueryParams();
 		BasicDBObject query = new BasicDBObject();
 		String region = info.getString("region");
-		for(String queryParam : queryParams){
-			if(queryParam != null)
+		for (String queryParam : queryParams) {
+			if (queryParam != null)
 				query.put(queryParam, info.get(queryParam));
 		}
-		return connection.queryJson(query, region+postfix);
+		return connection.queryJson(query, region + postfix, false);
 	}
-	public void sendJsonToServer(HttpServletResponse response, BasicDBObject[] arrayOfObjs){
+
+	public void sendJsonToServer(HttpServletResponse response, BasicDBObject[] arrayOfObjs) {
 		try {
 			PrintWriter out = response.getWriter();
 			out.write((new Gson()).toJson(arrayOfObjs));
@@ -255,7 +256,17 @@ public class BetaServlet extends HttpServlet {
 			e.printStackTrace();
 		}
 	}
+	public void sendJsonToServer(HttpServletResponse response, BasicDBObject arrayOfObjs) {
+		try {
+			PrintWriter out = response.getWriter();
+			out.write((new Gson()).toJson(arrayOfObjs));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+
 	public void destroy() {
-	    connection.closeConnection();
-	  }
+		connection.closeConnection();
+	}
 }

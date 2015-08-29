@@ -83,6 +83,12 @@ public class ClientConnector {
 	public final static String BR_ITEM = "br_collection_item";
 	public final static String OCE_ITEM = "oce_collection_item";
 	public final static String KR_ITEM = "kr_collection_item";
+	public final static String NA_ITEM_AGGREGATE = "na_collection_item_aggregate";
+	public final static String EUW_ITEM_AGGREGATE = "euw_collection_item_aggregate";
+	public final static String EUNE_ITEM_AGGREGATE = "eune_collection_item_aggregate";
+	public final static String BR_ITEM_AGGREGATE = "br_collection_item_aggregate";
+	public final static String OCE_ITEM_AGGREGATE = "oce_collection_item_aggregate";
+	public final static String KR_ITEM_AGGREGATE = "kr_collection_item_aggregate";
 
 	MongoClient mongoClient;
 	DBCollection collection;
@@ -200,7 +206,7 @@ public class ClientConnector {
 	 * @param Id int id object to find the games involved with the player
 	 * @return list of PlayerGameBeans that have playerId in it
 	 */
-	public ArrayList<BasicDBObject> queryJson(HashMap<String, Object> param, String colName){
+	public ArrayList<BasicDBObject> queryJson(HashMap<String, Object> param, String colName, boolean createIndex){
 		BasicDBObject query = new BasicDBObject();
 		for (Map.Entry<String, Object> entry : param.entrySet()) {
 		    System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
@@ -212,18 +218,22 @@ public class ClientConnector {
 		while(cursor.hasNext()){
 			dbList.add((BasicDBObject)cursor.next());
 		}
-		createIndexIfNotExist(colName, param);
+		if(createIndex)
+			createIndexIfNotExist(colName, param);
 		return dbList;
 	}
 	/*Only works for single layered queries*/
-	public ArrayList<BasicDBObject> queryJson(BasicDBObject query, String colName){
+	public ArrayList<BasicDBObject> queryJson(BasicDBObject query, String colName, boolean createIndex){
 		DBCollection collection = db.getCollection(colName);
 		DBCursor cursor = collection.find(query);
 		ArrayList<BasicDBObject> dbList = new ArrayList<BasicDBObject>();
 		while(cursor.hasNext()){
-			dbList.add((BasicDBObject)cursor.next());
+			BasicDBObject queryResult = (BasicDBObject)cursor.next();
+			dbList.add(queryResult);
+			System.out.println("queryResult : " +queryResult);
 		}
-		createIndexIfNotExist(colName, query);
+		if(createIndex)
+			createIndexIfNotExist(colName, query);
 		return dbList;
 	}
 	/**
@@ -295,49 +305,82 @@ public class ClientConnector {
 	 * @param tempCol, DBCollection used to query
 	 * @return array of DBCursors(only 2), one for ranks greater than, and one for same rank higher division for e.x.
 	 */
-	public BasicDBObject generateRankQuery(RankBean rank, int bounds){
+	public static BasicDBObject generateRankQuery(RankBean rank, int bounds){
+		if(bounds == -2)
+			return new BasicDBObject();
+
 		if(bounds < 0){
 			BasicDBList or = new BasicDBList();
-			BasicDBObject clause1 = new BasicDBObject();
-			BasicDBObject clause2 = new BasicDBObject("rank", rank.getRank());
-			BasicDBObject clause1lt = new BasicDBObject("$lt", rank.getRank());
-			BasicDBObject clause2lt = new BasicDBObject("$lte", rank.getDivision());
-			clause1.put("rank", clause1lt);//$or: [ { rank: { $gt: 3 } }, { division: { $gt: 2 } , rank : { 3 } ]
-			clause2.put("division",clause2lt);
-			or.add(clause1);
-			or.add(clause2);
-			return new BasicDBObject("$or", or);
+			
+			if(rank.getRank() != -1){
+				BasicDBObject clause1 = new BasicDBObject();
+				BasicDBObject clause1lt = new BasicDBObject("$lt", rank.getRank());
+				clause1.put("rank", clause1lt);//$or: [ { rank: { $gt: 3 } }, { division: { $gt: 2 } , rank : { 3 } ]
+				or.add(clause1);
+			}
+			if(rank.getDivision() != -1){
+				BasicDBObject clause2 = new BasicDBObject("rank", rank.getRank());
+				BasicDBObject clause2lt = new BasicDBObject("$lte", rank.getDivision());
+				clause2.put("division",clause2lt);
+				or.add(clause2);
+			}
+			if(or.size() != 0)
+				return new BasicDBObject("$or", or);
+			else 
+				return new BasicDBObject();
 		}
 		else if(bounds > 0){
 			BasicDBList or = new BasicDBList();
-			BasicDBObject clause1 = new BasicDBObject();
-			BasicDBObject clause2 = new BasicDBObject("rank", rank.getRank());
-			BasicDBObject clause1gt = new BasicDBObject("$gt", rank.getRank());
-			BasicDBObject clause2gt = new BasicDBObject("$gte", rank.getDivision());
-			clause1.put("rank", clause1gt);//$or: [ { rank: { $gt: 3 } }, { division: { $gt: 2 } , rank : { 3 } ]
-			clause2.put("division",clause2gt);
-			or.add(clause1);
-			or.add(clause2);
-			return new BasicDBObject("$or", or);
+			
+			if(rank.getRank() != -1){
+				BasicDBObject clause1 = new BasicDBObject();
+				BasicDBObject clause1lt = new BasicDBObject("$gt", rank.getRank());
+				clause1.put("rank", clause1lt);//$or: [ { rank: { $gt: 3 } }, { division: { $gt: 2 } , rank : { 3 } ]
+				or.add(clause1);
+			}
+			if(rank.getDivision() != -1){
+				BasicDBObject clause2 = new BasicDBObject("rank", rank.getRank());
+				BasicDBObject clause2lt = new BasicDBObject("$gte", rank.getDivision());
+				clause2.put("division",clause2lt);
+				or.add(clause2);
+			}
+			if(or.size() != 0)
+				return new BasicDBObject("$or", or);
+			else 
+				return new BasicDBObject();
 		}
 		else{
-			return new BasicDBObject("rank", rank.getRank());
+			BasicDBObject query = new BasicDBObject("rank", rank.getRank());
+			query.append("division", rank.getDivision());
+			return query;
 		}
 	}
-	public BasicDBObject generateDateRangeQuery(int weekStart, int weekEnd, int yearStart, int yearEnd){
-		BasicDBObject startDate = new BasicDBObject();
-		startDate.put("weekDate", new BasicDBObject("$gte", weekStart));
-		startDate.put("yearDate", new BasicDBObject("$gte", yearStart));
-		BasicDBObject endDate = new BasicDBObject();
-		startDate.put("weekDate", new BasicDBObject("$lte", weekEnd));
-		startDate.put("yearDate", new BasicDBObject("$lte", yearEnd));
-		BasicDBList and = new BasicDBList();
-		and.add(startDate);
-		and.add(endDate);
-		return new BasicDBObject("$and", and);
+	public static BasicDBObject generateDateRangeQuery(int weekStart, int weekEnd, int yearStart, int yearEnd){
+		BasicDBObject week = new BasicDBObject();
+		BasicDBObject year = new BasicDBObject();
+		if(weekStart != -1)
+			week.append("$gte", weekStart);
+		if(yearStart != -1)
+			year.append("$gte", yearStart);
+		
+		if(weekEnd != -1)
+			week.append("$lte", weekEnd);
+		if(yearStart != -1)
+			year.append("$lte", yearEnd);
+		BasicDBObject date = new BasicDBObject();
+		date.append("weekDate", week);
+		date.append("yearDate", year);
+		System.out.println(date);
+		return date;
 	}
-	public BasicDBObject generateDurationRangeQuery(long timeEnd){
-		return new BasicDBObject("$lte", new BasicDBObject("matchDuration", timeEnd));
+	public static BasicDBObject generateDurationRangeQuery(int timeStart, int timeEnd){
+		BasicDBObject time = new BasicDBObject();
+		if(timeStart != -1)
+			time.append("$gte", timeStart);
+		if(timeEnd != -1)
+			time.append("$lte", timeEnd);
+
+		return new BasicDBObject("matchDuration", time);
 	}
 	/**
 	 * Creates an index for easy accessing database indices, so far takes care of _collection, _champ, _item

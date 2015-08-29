@@ -18,6 +18,7 @@ public class ItemBean{
 		queryParams.add("championId");
 		queryParams.add("weekDate");
 		queryParams.add("yearDate");
+		queryParams.add("matchDuration");
 		
 		removeParams.add("championId");
 		removeParams.add("rank");
@@ -25,6 +26,7 @@ public class ItemBean{
 		removeParams.add("weekDate");
 		removeParams.add("yearDate");
 		removeParams.add("itemId");
+		removeParams.add("matchDuration");
 	}
 	int itemId;
 	int rank;
@@ -59,14 +61,14 @@ public class ItemBean{
 	int trueDamageDealtToChampions;
 	/*time flag*/
 	int weekDate, yearDate;
-	
+	int matchDuration; // 0 for 0-10 minutes, 1 for 10-20 minutes, 2 for 20-30 minutes, 3 for 30-40 minutes, 4 for 40-50 minutes, and so on.
 
 	
 	public ItemBean(int itemId, int rank, int division, int championId, int assists, int deaths, int kills,
 			int wins, HashMap<String, Integer> laneQty, HashMap<String, Integer> roleQty, int qty,
 			int trueDamageTaken, int magicDamageTaken, int physicalDamageTaken, int totalDamageTaken,
 			int magicDamageDealtToChampions, int physicalDamageDealtToChampions, int totalDamageDealtToChampions,
-			int trueDamageDealtToChampions, int weekDate, int yearDate) {
+			int trueDamageDealtToChampions, int weekDate, int yearDate, int matchDuration) {
 		super();
 		this.itemId = itemId;
 		this.rank = rank;
@@ -98,9 +100,10 @@ public class ItemBean{
 		this.trueDamageDealtToChampions = trueDamageDealtToChampions;
 		this.weekDate = weekDate;
 		this.yearDate = yearDate;
+		this.matchDuration = matchDuration;
 	}
 
-	public static ItemBean[] playerMatchBeanToItemBean(PlayerMatchBean bean, RankBean rankBean){
+	public static ItemBean[] playerMatchBeanToItemBean(PlayerMatchBean bean, RankBean rankBean, long matchLength){
 		List<ItemBean> beans = new ArrayList<>();
 		int qty = 1;
 		int championId = bean.getChampionId();
@@ -122,6 +125,7 @@ public class ItemBean{
 		int totalDamageDealtToChampions= bean.getTotalDamageDealtToChampions();
 		int trueDamageDealtToChampions= bean.getTrueDamageDealtToChampions();
 		
+		int matchDur = (int)matchLength/60/10;
 		int wins = bean.isWinner() ? 1 : 0;
 
 		int weekDate = bean.getWeekDate();
@@ -139,7 +143,7 @@ public class ItemBean{
 					 assists,  deaths,  kills, wins, laneQty, roleQty,  qty,
 					 trueDamageTaken,  magicDamageTaken,  physicalDamageTaken,  totalDamageTaken,
 					 magicDamageDealtToChampions,  physicalDamageDealtToChampions,  totalDamageDealtToChampions,
-					 trueDamageDealtToChampions,  weekDate,  yearDate));
+					 trueDamageDealtToChampions,  weekDate,  yearDate, matchDur));
 		}
 		return beans.toArray(new ItemBean[beans.size()]);
 	}

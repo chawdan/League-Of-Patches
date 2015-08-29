@@ -51,7 +51,7 @@ public class RateLimiter {
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
-					return new ResponseObject(true, tryRequest(api, url).getJson());
+					json = tryRequest(api, url).getJson();
 				}
 				return new ResponseObject(true, json);
 			}
