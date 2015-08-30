@@ -34,7 +34,7 @@ The champions will be listed in a sortable list. The user can drag the champions
   - find the statistics of a champion in a specific range of ranking and division. Say you want to only know statistics for people between Silver 4 and Platinum 2? No problem!
   - find the statistics of a champion in a specific date range in weekly endpoints. Say you want to know statistics for champion info between week 20 and week 30 of year 2015? Or week 20 of 2013 to week 40 of 2015? No problem!
   - find the statistics of a champion in matches that end before the 20 minute mark? 30 minute mark? 40 minute mark? This would be very helpful for analyzing whether a champion is strong in lategame vs earlygame! **wink wink**
----
+
 ## The Items
 ---
 ## The Bans
