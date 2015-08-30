@@ -18,7 +18,6 @@ After every patch, the win rates of champions fluxuate depending on how severe t
 # How To Use Our Website
 ## The Intro 
 
-
 Upon entering our website, the user is confronted with the 4 different choices listed below, with a slight overview of each in the main screen. The intro's main job is to guide the users to the different functionalities of the website.
 ---
 ## The Champions
