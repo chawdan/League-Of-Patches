@@ -16,6 +16,16 @@ After every patch, the win rates of champions fluxuate depending on how severe t
   - JQuery and AJAX to communicate with Riot's static API
   
 # How To Use Our Website
+---
+## The Intro 
+---
+## The Champions
+---
+## The Items
+---
+## The Bans
+---
+## The User's Account
 
 # Our Goals In The Project
   - Allow the user to clearly and concisely see the difference in KDA, damage/damage taken, usage/popularity, scaling, specificity, skill level of a champion before and after patches. The data currently in the Nosql database holds 10 thousand North America, Korean, European(both west and north east), etc matches as a starting point for comparison for the AP Items. ✓
