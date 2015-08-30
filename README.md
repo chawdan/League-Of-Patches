@@ -17,10 +17,13 @@ After every patch, the win rates of champions fluxuate depending on how severe t
   
 # How To Use Our Website
 ## The Intro 
+
+
 Upon entering our website, the user is confronted with the 4 different choices listed below, with a slight overview of each in the main screen. The intro's main job is to guide the users to the different functionalities of the website.
 ---
 ## The Champions
 The champions will be listed in a sortable list. The user can drag the champions list positions around for better visualization. However, the list is first sorted alphabetically. Upon clicking the champion's name or its image, the user will be directed to a page for a much expanded version of statistics, displaying a wide variety of data. 
+
 #### This page is for those who want to:
   - find the *win rate, KDA* of a champion
   - find how much damage the champion *does* on average
@@ -28,6 +31,7 @@ The champions will be listed in a sortable list. The user can drag the champions
   - find which *lanes* are most popular for this champion
   - find which *roles* are most popular for this champion
   - find many *per minute differences* of the champion, such as Creep Score, Gold, etc.
+  
 #### This page has the following queries:
   - find the statistics of a champion in a specific range of ranking and division. Say you want to only know statistics for people between Silver 4 and Platinum 2? No problem!
   - find the statistics of a champion in a specific date range in weekly endpoints. Say you want to know statistics for champion info between week 20 and week 30 of year 2015? Or week 20 of 2013 to week 40 of 2015? No problem!
