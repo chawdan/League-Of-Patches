@@ -17,7 +17,7 @@ After every patch, the win rates of champions fluxuate depending on how severe t
   
 # How To Use Our Website
 ## The Intro 
-Upon entering our website, the user is confronted with the 4 different choices listed below, with a slight overview of each in the main screen. The intro's main job is to guide the users to the different functionalities of the website.
+
 ---
 ## The Champions
 The champions will be listed in a sortable list. The user can drag the champions list positions around for better visualization. However, the list is first sorted alphabetically. Upon clicking the champion's name or its image, the user will be directed to a page for a much expanded version of statistics, displaying a wide variety of data. 
