@@ -75,6 +75,7 @@ function loadMatchHistoryInfo(json) {/*work on this*/
 function loadIconsOfSummoner(profileIcon, summonerName, summonerId){
   /* reads an image file of the icon, and displays summonerName as a clickable URL, with the value
     of summonerId. For now we can redirect the <a href> to the same page. */
+
 }
 function loadIconsOfRunes(runes){
   /* reads runes information. We get the image associated with the rune ID(which we can get from
@@ -93,7 +94,7 @@ function loadDamageDealt(magicDamageDealtToChampions, physicalDamageDealtToChamp
   /* reads in the damages, and since all other damage together = totalDamageDealtToChampions,
     create a bar-GUI( that will show what % of total was magic, physical, true, etc */
 
-  /*for the widget to use for the bar-GUI, check out kendo UI's "chart-api" <-- yes verbatim*/
+  /*for the widget to use for the bar-GUI, check out kendo UI's "chart-api" http://dojo.telerik.com/aFOqa <-- yes verbatim*/
 }
 function loadDamageTaken(magicDamageTaken, physicalDamageTaken, trueDamageTaken, totalDamageTaken){
   /*same thing as loadDamageDealt*/
