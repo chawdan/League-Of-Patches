@@ -81,7 +81,10 @@ function loadIconsOfRunes(runes){
   /* reads runes information. We get the image associated with the rune ID(which we can get from
     rune.runeId), and append after that the quantity of the runes(which we can get from rune.rank)
     so it will be like "insert icon" x "insert quantity" */
-
+    for (var rune in runes) {
+      var runeImage = rune.runeId;
+      var numberOfRunes = rune.rank;
+    }
 }
 function loadIconsOfItems(items){
   /* reads items, and gets their ID. Display them in a row underneath the icons of summoners*/
@@ -92,6 +95,16 @@ function loadIconsOfItems(items){
 function loadKda(kills, deaths, assists, winner){
   /* reads in these #'s and displays them in simple number format. For the win,
     display it in the background, as win = green, loss = red */
+    for (var kill in kills) {
+      Number(kill);
+    }
+    for (var death in deaths) {
+      Number(death);
+    }
+    for (var assist in assists) {
+      Number(assist);
+    }
+
 }
 function loadDamageDealt(magicDamageDealtToChampions, physicalDamageDealtToChampions,
       trueDamageDealtToChampions, totalDamageDealtToChampions){
