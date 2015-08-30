@@ -1,0 +1,64 @@
+.logo {
+	position: relative;
+	left: -30px;
+	bottom: 15px;
+}
+
+.about-tab {
+	position: relative;
+	left: -100px;
+	bottom: 0px
+}
+
+.champions-tab {
+	position: relative;
+	left: -50px;
+	bottom: 0px;
+}
+
+.search-tab {
+	position: relative;
+	left: 1600px;
+	bottom: 30px;
+}
+
+.menu-bonus {
+	position: relative;
+	bottom: -114px;
+}
+
+.rebind-button {
+	position: relative;
+	bottom: 25px;
+	left: 0px;
+}
+
+/* unvisited link */
+a:link {
+    color: #4BA697;
+    text-decoration: none;
+}
+
+/* visited link */
+a:visited {
+    color: #4BA697;
+    text-decoration: none;
+}
+
+/* mouse over link */
+a:hover {
+    color: #333333;
+    text-decoration: none;
+}
+
+/* selected link */
+a:active {
+    color: #333333;
+    text-decoration: none;
+}
+
+body div#div{
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
