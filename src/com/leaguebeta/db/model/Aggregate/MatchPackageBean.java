@@ -8,12 +8,22 @@ public class MatchPackageBean {
 	MatchBean match;
 	PlayerMatchBean[] players;
 	TeamBean[] teams;
+	BannedChampionBean[] bans;
 	
-	public MatchPackageBean(MatchBean match, PlayerMatchBean[] players, TeamBean[] teams) {
+	public MatchPackageBean(MatchBean match, PlayerMatchBean[] players, TeamBean[] teams, BannedChampionBean[] bans) {
 		super();
 		this.match = match;
 		this.players = players;
 		this.teams = teams;
+		this.bans = bans;
+	}
+
+	public BannedChampionBean[] getBans() {
+		return bans;
+	}
+
+	public void setBans(BannedChampionBean[] bans) {
+		this.bans = bans;
 	}
 
 	public MatchBean getMatch() {

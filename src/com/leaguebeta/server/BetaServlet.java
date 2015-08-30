@@ -96,9 +96,13 @@ public class BetaServlet extends HttpServlet {
 			for(BasicDBObject ans : answer){
 				System.out.println(ans);
 			}
-			
 			sendJsonToServer(response, answer.toArray(new BasicDBObject[answer.size()]));
 			break;
+		case "/showAllAggregateChampion": 
+			BasicDBObject queryAggregateChamp = buildBasicDBObjectSkeleton(request);
+			queryAggregateChamp.append("championId", Integer.parseInt(request.getParameter("championId")));
+			answer = connection.queryJson(queryAggregateChamp, request.getParameter("region")+"_collection_champ_aggregate", false); //queryChamp, request.getParameter("region")+"_collection_champ");
+			sendJsonToServer(response, answer.toArray(new BasicDBObject[answer.size()]));
 		case "/showAggregateItem":
 			BasicDBObject queryItem = buildDBObjectSkeleton(request);
 			queryItem.append("itemId", Integer.parseInt(request.getParameter("itemId")));
@@ -110,26 +114,47 @@ public class BetaServlet extends HttpServlet {
 			}
 			sendJsonToServer(response, answer.toArray(new BasicDBObject[answer.size()]));
 			break;
+		case "/showAllAggregateItem":
+			BasicDBObject queryAggregateItem = buildBasicDBObjectSkeleton(request);
+			queryAggregateItem.append("itemId", Integer.parseInt(request.getParameter("itemId")));
+			queryAggregateItem.append("championId", Integer.parseInt(request.getParameter("championId")));
+			System.out.println(queryAggregateItem);
+			answer = connection.queryJson(queryAggregateItem, request.getParameter("region")+"_collection_item_aggregate", false);
+			for(BasicDBObject ans : answer){
+				System.out.println(ans);
+			}
+			sendJsonToServer(response, answer.toArray(new BasicDBObject[answer.size()]));
+			break;
 		case "/showAggregateRune":
 			BasicDBObject queryRune = buildDBObjectSkeleton(request);
-			queryRune.append("runeId", request.getParameter("runeId"));
-			queryRune.append("championId", request.getParameter("championId"));
+			queryRune.append("runeId", Integer.parseInt(request.getParameter("runeId")));
+			queryRune.append("championId", Integer.parseInt(request.getParameter("championId")));
 			System.out.println(queryRune);
 			connection.queryJson(queryRune, request.getParameter("region")+"_collection_rune", false);
 			sendJsonToServer(response, queryRune);
 			break;
 		case "/showAggregateMastery":
 			BasicDBObject queryMastery = buildDBObjectSkeleton(request);
-			queryMastery.append("masteryId", request.getParameter("masteryId"));
-			queryMastery.append("championId", request.getParameter("championId"));
+			queryMastery.append("masteryId", Integer.parseInt(request.getParameter("masteryId")));
+			queryMastery.append("championId", Integer.parseInt(request.getParameter("championId")));
 			System.out.println(queryMastery);
 			connection.queryJson(queryMastery, request.getParameter("region")+"_collection_mastery", false);
 			sendJsonToServer(response, queryMastery);
 			break;
-
-		case "/showWeeklyAvg":
-			// manageWeeklyAvg(request, response);
-			break;
+		case "/showTeam":
+			BasicDBObject queryTeam = buildBasicDBObjectSkeleton(request);
+			queryTeam.append("teamId", Integer.parseInt(request.getParameter("teamId")));
+			queryTeam.append("matchId", Integer.parseInt(request.getParameter("matchId")));
+			connection.queryJson(queryTeam, request.getParameter("region")+"_collection_team", false);
+			sendJsonToServer(response, queryTeam);
+		case "/showAggregateBans":
+			BasicDBObject queryBans = buildDBObjectWithoutDurationSkeleton(request);
+			queryBans.append("championId", request.getParameter("championId"));
+			String pickTurn = request.getParameter("pickTurn");
+			if(pickTurn != null)
+				queryBans.append("pickTurn", Integer.parseInt(pickTurn));
+			connection.queryJson(queryBans, request.getParameter("region")+"_collection_ban", false);
+			sendJsonToServer(response, queryBans);
 		// Rate-Limited API calls
 		case "/callRiotMatch":
 			JSONObject matchJson = caller.callRiotMatch(request.getParameter("region"), request.getParameter("matchID"),
@@ -151,17 +176,41 @@ public class BetaServlet extends HttpServlet {
 			break;
 		}
 	}
-
-	private static BasicDBObject buildDBObjectSkeleton(HttpServletRequest request){
+	
+	private static BasicDBObject buildBasicDBObjectSkeleton(HttpServletRequest request){
 		BasicDBObject query = new BasicDBObject();
 		Map<String, String[]> params = request.getParameterMap();
-
 		query.putAll((BSONObject)ClientConnector.generateDateRangeQuery(Integer.parseInt(params.get("weekDate")[0]), 
 				Integer.parseInt(params.get("weekDate")[1]),
 				Integer.parseInt(params.get("yearDate")[0]),
 				Integer.parseInt(params.get("yearDate")[1])));
-		query.putAll((BSONObject)ClientConnector.generateDurationRangeQuery(Integer.parseInt(params.get("matchDuration")[0]), 
-				Integer.parseInt(params.get("matchDuration")[1])));
+		return query;
+	}
+	
+	private static BasicDBObject buildDBObjectWithoutDurationSkeleton(HttpServletRequest request){
+		Map<String, String[]> params = request.getParameterMap();
+		BasicDBObject query = new BasicDBObject();
+		query = buildBasicDBObjectSkeleton(request);
+
+		BasicDBObject lowerRank = ClientConnector.generateRankQuery(new RankBean(
+				Integer.parseInt(params.get("rank")[0]), 
+				Integer.parseInt(params.get("division")[0])), 1);
+		BasicDBObject higherRank = ClientConnector.generateRankQuery(new RankBean(
+				Integer.parseInt(params.get("rank")[1]), 
+				Integer.parseInt(params.get("division")[1])), -1);
+		BasicDBList and = new BasicDBList();
+		and.add(lowerRank);
+		and.add(higherRank);
+		query.append("$and", and);
+		System.out.println(query);
+		return query;
+	}
+	
+	private static BasicDBObject buildDBObjectSkeleton(HttpServletRequest request){
+		Map<String, String[]> params = request.getParameterMap();
+		BasicDBObject query = new BasicDBObject();
+		query = buildBasicDBObjectSkeleton(request);
+		
 		BasicDBObject lowerRank = ClientConnector.generateRankQuery(new RankBean(
 				Integer.parseInt(params.get("rank")[0]), 
 				Integer.parseInt(params.get("division")[0])), 1);

@@ -1,6 +1,7 @@
 package com.leaguebeta.db.transferBean;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -12,8 +13,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.leaguebeta.db.model.Team.BannedChampionBean;
+import com.leaguebeta.db.model.Aggregate.BannedChampionBean;
+import com.leaguebeta.db.model.Team.TeamAndBanBeanWrapper;
 import com.leaguebeta.db.model.Team.TeamBean;
+import com.mongodb.connection.Stream;
 import com.leaguebeta.db.model.Aggregate.MatchPackageBean;
 import com.leaguebeta.db.model.Match.MatchBean;
 import com.leaguebeta.db.model.Match.Timeline.EventBean;
@@ -182,10 +185,11 @@ public class BeanDelegator {
 		}
 		return players;
 	}
-	public static TeamBean[] delegateTeamBean(JSONObject json, int weekDate, int yearDate){
+	public static TeamAndBanBeanWrapper delegateTeamBean(JSONObject json, int weekDate, int yearDate){
 		/*takes care of TeamBean*/
 		JSONArray teamArray = json.getJSONArray("teams");
 		TeamBean[] teams = new TeamBean[teamArray.length()];
+		ArrayList<BannedChampionBean> banList = new ArrayList<>();
 		for(int i = 0; i < teamArray.length(); i++){
 			JSONObject team = teamArray.getJSONObject(i);
 			int baronKills = team.getInt("baronKills");	//	int	Number of times the team killed baron
@@ -202,15 +206,14 @@ public class BeanDelegator {
 			int vilemawKills = team.getInt("vilemawKills");	//	int	Number of times the team killed vilemaw
 			boolean winner = team.getBoolean("winner");
 			JSONArray banJson = team.getJSONArray("bans");
-			BannedChampionBean[] bans = new BannedChampionBean[banJson.length()];	//	List[BannedChampion]	If game was draft mode, contains banned champion data, otherwise null
 			for(int j = 0; j < banJson.length(); j++){
 				JSONObject ban = banJson.getJSONObject(i);
-				bans[j] = new BannedChampionBean(ban.getInt("championId"), ban.getInt("pickTurn"));
+				banList.add(new BannedChampionBean(ban.getInt("championId"), ban.getInt("pickTurn"), weekDate, yearDate, 0));//set 0 as stub!
 			}
-			teams[i] = new TeamBean(json.getLong("matchId"), bans, baronKills, dominionVictoryScore, dragonKills, firstBaron, firstBlood, 
+			teams[i] = new TeamBean(json.getLong("matchId"), baronKills, dominionVictoryScore, dragonKills, firstBaron, firstBlood, 
 					firstDragon, firstInhibitor, firstTower, inhibitorKills, teamId, towerKills, vilemawKills, winner, weekDate, yearDate);
 		}
-		return teams;
+		return new TeamAndBanBeanWrapper(teams, banList.toArray(new BannedChampionBean[banList.size()]));
 	}
 	public static MatchPackageBean delegateMatchJson(JSONObject json){
 		/*time stuff, weekDate and yearDate are important*/
@@ -222,7 +225,9 @@ public class BeanDelegator {
 		int yearDate = calendar.get(Calendar.YEAR);
 		
 		PlayerMatchBean[] players = delegatePlayerMatchBean(json, weekDate, yearDate);
-		TeamBean[] teams = delegateTeamBean(json, weekDate, yearDate);
+		TeamAndBanBeanWrapper wrap = delegateTeamBean(json, weekDate, yearDate);
+		TeamBean[] teams = wrap.getTeams();
+		BannedChampionBean[] bans = wrap.getBans();
 		
 		int mapId = json.getInt("mapId"); //int	Match map ID
 		long matchDuration = json.getLong("matchDuration"); //long	Match duration
@@ -234,7 +239,8 @@ public class BeanDelegator {
 		String queueType = json.getString("queueType");	//string	Match queue type (Legal values: CUSTOM, NORMAL_5x5_BLIND, RANKED_SOLO_5x5, RANKED_PREMADE_5x5, BOT_5x5, NORMAL_3x3, RANKED_PREMADE_3x3, NORMAL_5x5_DRAFT, ODIN_5x5_BLIND, ODIN_5x5_DRAFT, BOT_ODIN_5x5, BOT_5x5_INTRO, BOT_5x5_BEGINNER, BOT_5x5_INTERMEDIATE, RANKED_TEAM_3x3, RANKED_TEAM_5x5, BOT_TT_3x3, GROUP_FINDER_5x5, ARAM_5x5, ONEFORALL_5x5, FIRSTBLOOD_1x1, FIRSTBLOOD_2x2, SR_6x6, URF_5x5, ONEFORALL_MIRRORMODE_5x5, BOT_URF_5x5, NIGHTMARE_BOT_5x5_RANK1, NIGHTMARE_BOT_5x5_RANK2, NIGHTMARE_BOT_5x5_RANK5, ASCENSION_5x5, HEXAKILL, BILGEWATER_ARAM_5x5, KING_PORO_5x5, COUNTER_PICK, BILGEWATER_5x5)
 		String region = json.getString("region");	//	string	Region where the match was played
 		String season = json.getString("season");	//	string	Season match was played (Legal values: PRESEASON3, SEASON3, PRESEASON2014, SEASON2014, PRESEASON2015, SEASON2015)
-		MatchBean match = new MatchBean();
+		MatchBean match = new MatchBean( mapId,  matchCreation,  matchDuration,  matchId,  matchMode,
+				 matchType,  matchVersion,  platformId,  queueType,  region,  season, weekDate, yearDate);
 //		JSONObject timeline = json.optJSONObject("timeline");
 //		if(!(timeline == null)){/*that means the rest were all valued*/
 //			JSONArray frames = timeline.optJSONArray("frames");
@@ -305,14 +311,13 @@ public class BeanDelegator {
 //							participantId, position, teamScore, totalGold, xp, timeStamp));
 //				}
 //			}
-			match = new MatchBean( mapId,  matchCreation,  matchDuration,  matchId,  matchMode,
-					 matchType,  matchVersion,  platformId,  queueType,  region,  season);
+			
 //		}
 //		else{//if timeline was not selected to be true
 //			match = new MatchBean( mapId,  matchCreation,  matchDuration,  matchId,  matchMode,
 //					 matchType,  matchVersion,  platformId,  queueType,  region,  season);
 //		}
-		return new MatchPackageBean(match, players, teams);
+		return new MatchPackageBean(match, players, teams, bans);
 	}
 	public static int loadJsonInt(String param, JSONObject json){
 		int field;

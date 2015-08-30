@@ -3,15 +3,23 @@ package com.leaguebeta.db.model.Team;
 import java.util.ArrayList;
 
 public class TeamBean {
-	public static transient ArrayList<String> queryParams;
+	public static transient ArrayList<String> queryParams, removeParams;
 	static{
 		queryParams = new ArrayList<String>();
+		removeParams = new ArrayList<String>();
+		
 		queryParams.add("teamId");
 		queryParams.add("matchId");
+		queryParams.add("weekDate");
+		queryParams.add("yearDate");
+		
+		removeParams.add("teamId");
+		removeParams.add("matchId");
+		removeParams.add("weekDate");
+		removeParams.add("yearDate");
 	}
 	//team tight game info
 	long matchId;
-	BannedChampionBean[] bans;	//	List[BannedChampion]	If game was draft mode, contains banned champion data, otherwise null
 	int baronKills;	//	int	Number of times the team killed baron
 	int dominionVictoryScore;	//	long	If game was a dominion game, specifies the points the team had at game end, otherwise null
 	int dragonKills;	//	int	Number of times the team killed dragon
@@ -29,11 +37,10 @@ public class TeamBean {
 	int weekDate;
 	int yearDate;
 
-	public TeamBean(long matchId, BannedChampionBean[] bans, int baronKills, int dominionVictoryScore, int dragonKills,
+	public TeamBean(long matchId, int baronKills, int dominionVictoryScore, int dragonKills,
 			boolean firstBaron, boolean firstBlood, boolean firstDragon, boolean firstInhibitor, boolean firstTower,
 			int inhibitorKills, int teamId, int towerKills, int vilemawKills, boolean winner, int weekDate, int yearDate) {
 		this.matchId = matchId;
-		this.bans = bans;
 		this.baronKills = baronKills;
 		this.dominionVictoryScore = dominionVictoryScore;
 		this.dragonKills = dragonKills;
@@ -80,12 +87,6 @@ public class TeamBean {
 	}
 	public void setMatchId(long matchId) {
 		this.matchId = matchId;
-	}
-	public BannedChampionBean[] getBans() {
-		return bans;
-	}
-	public void setBans(BannedChampionBean[] bans) {
-		this.bans = bans;
 	}
 	public int getBaronKills() {
 		return baronKills;

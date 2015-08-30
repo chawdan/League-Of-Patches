@@ -41,6 +41,11 @@ public class ClientConnector {
 	public final static String BR = "br_collection";
 	public final static String OCE = "oce_collection";
 	public final static String KR = "kr_collection";
+	public final static String LAS = "las_collection";
+	public final static String LAN = "lan_collection";
+	public final static String RU = "ru_collection";
+	public final static String TR = "tr_collection";
+
 	//String constants for accessing match database *singular*
 	public final static String NA_MATCH = "na_collection_match";
 	public final static String EUW_MATCH = "euw_collection_match";
@@ -48,6 +53,11 @@ public class ClientConnector {
 	public final static String BR_MATCH = "br_collection_match";
 	public final static String OCE_MATCH = "oce_collection_match";
 	public final static String KR_MATCH = "kr_collection_match";
+	public final static String LAS_MATCH = "las_collection_match";
+	public final static String LAN_MATCH = "lan_collection_match";
+	public final static String RU_MATCH = "ru_collection_match";
+	public final static String TR_MATCH = "tr_collection_match";
+	
 	//String constants for accessing player match database *singular*
 	public final static String NA_PLAYER = "na_collection_player";
 	public final static String EUW_PLAYER = "euw_collection_player";
@@ -55,6 +65,11 @@ public class ClientConnector {
 	public final static String BR_PLAYER = "br_collection_player";
 	public final static String OCE_PLAYER = "oce_collection_player";
 	public final static String KR_PLAYER = "kr_collection_player";
+	public final static String LAS_PLAYER = "las_collection_player";
+	public final static String LAN_PLAYER = "lan_collection_player";
+	public final static String RU_PLAYER = "ru_collection_player";
+	public final static String TR_PLAYER = "tr_collection_player";
+	
 	//String constants for accessing champion database *singular*
 	public final static String NA_CHAMP = "na_collection_champ";
 	public final static String EUW_CHAMP = "euw_collection_champ";
@@ -62,6 +77,22 @@ public class ClientConnector {
 	public final static String BR_CHAMP = "br_collection_champ";
 	public final static String OCE_CHAMP = "oce_collection_champ";
 	public final static String KR_CHAMP = "kr_collection_champ";
+	public final static String LAS_CHAMP = "las_collection_champ";
+	public final static String LAN_CHAMP = "lan_collection_champ";
+	public final static String RU_CHAMP = "ru_collection_champ";
+	public final static String TR_CHAMP = "tr_collection_champ";
+	
+	public final static String NA_CHAMP_AGGREGATE = "na_collection_champ_aggregate";
+	public final static String EUW_CHAMP_AGGREGATE = "euw_collection_champ_aggregate";
+	public final static String EUNE_CHAMP_AGGREGATE = "eune_collection_champ_aggregate";
+	public final static String BR_CHAMP_AGGREGATE = "br_collection_champ_aggregate";
+	public final static String OCE_CHAMP_AGGREGATE = "oce_collection_champ_aggregate";
+	public final static String KR_CHAMP_AGGREGATE = "kr_collection_champ_aggregate";
+	public final static String LAS_CHAMP_AGGREGATE = "las_collection_champ_aggregate";
+	public final static String LAN_CHAMP_AGGREGATE = "lan_collection_champ_aggregate";
+	public final static String RU_CHAMP_AGGREGATE = "ru_collection_champ_aggregate";
+	public final static String TR_CHAMP_AGGREGATE = "tr_collection_champ_aggregate";
+	
 	//String constants for accessing team database *singular*
 	public final static String NA_TEAM = "na_collection_team";
 	public final static String EUW_TEAM = "euw_collection_team";
@@ -69,6 +100,11 @@ public class ClientConnector {
 	public final static String BR_TEAM = "br_collection_team";
 	public final static String OCE_TEAM = "oce_collection_team";
 	public final static String KR_TEAM = "kr_collection_team";
+	public final static String LAS_TEAM = "las_collection_team";
+	public final static String LAN_TEAM = "lan_collection_team";
+	public final static String RU_TEAM = "ru_collection_team";
+	public final static String TR_TEAM = "tr_collection_team";
+	
 	//String constants for accessing spells *aggregate*
 	public final static String NA_SPELL = "na_collection_spell";
 	public final static String EUW_SPELL = "euw_collection_spell";
@@ -76,6 +112,11 @@ public class ClientConnector {
 	public final static String BR_SPELL = "br_collection_spell";
 	public final static String OCE_SPELL = "oce_collection_spell";
 	public final static String KR_SPELL = "kr_collection_spell";
+	public final static String LAS_SPELL = "las_collection_spell";
+	public final static String LAN_SPELL = "lan_collection_spell";
+	public final static String RU_SPELL = "ru_collection_spell";
+	public final static String TR_SPELL = "tr_collection_spell";
+	
 	//String constants for accessing item database *aggregate*
 	public final static String NA_ITEM = "na_collection_item";
 	public final static String EUW_ITEM = "euw_collection_item";
@@ -83,12 +124,33 @@ public class ClientConnector {
 	public final static String BR_ITEM = "br_collection_item";
 	public final static String OCE_ITEM = "oce_collection_item";
 	public final static String KR_ITEM = "kr_collection_item";
+	public final static String LAS_ITEM = "las_collection_item";
+	public final static String LAN_ITEM = "lan_collection_item";
+	public final static String RU_ITEM = "ru_collection_item";
+	public final static String TR_ITEM = "tr_collection_item";
+	
 	public final static String NA_ITEM_AGGREGATE = "na_collection_item_aggregate";
 	public final static String EUW_ITEM_AGGREGATE = "euw_collection_item_aggregate";
 	public final static String EUNE_ITEM_AGGREGATE = "eune_collection_item_aggregate";
 	public final static String BR_ITEM_AGGREGATE = "br_collection_item_aggregate";
 	public final static String OCE_ITEM_AGGREGATE = "oce_collection_item_aggregate";
 	public final static String KR_ITEM_AGGREGATE = "kr_collection_item_aggregate";
+	public final static String LAS_ITEM_AGGREGATE = "las_collection_item_aggregate";
+	public final static String LAN_ITEM_AGGREGATE = "lan_collection_item_aggregate";
+	public final static String RU_ITEM_AGGREGATE = "ru_collection_item_aggregate";
+	public final static String TR_ITEM_AGGREGATE = "tr_collection_item_aggregate";
+	
+	//String constants for accessing banned champions database *aggregate*
+	public final static String NA_BAN = "na_collection_ban";
+	public final static String EUW_BAN = "euw_collection_ban";
+	public final static String EUNE_BAN = "eune_collection_ban";
+	public final static String BR_BAN = "br_collection_ban";
+	public final static String OCE_BAN = "oce_collection_ban";
+	public final static String KR_BAN = "kr_collection_ban";
+	public final static String LAS_BAN = "las_collection_ban";
+	public final static String LAN_BAN = "lan_collection_ban";
+	public final static String RU_BAN = "ru_collection_ban";
+	public final static String TR_BAN = "tr_collection_ban";
 
 	MongoClient mongoClient;
 	DBCollection collection;
@@ -235,6 +297,14 @@ public class ClientConnector {
 		if(createIndex)
 			createIndexIfNotExist(colName, query);
 		return dbList;
+	}
+	
+	public long getSpecifiedCollectionSize(BasicDBObject query, String colName, boolean createIndex){
+		DBCollection collection = db.getCollection(colName);
+		long count = collection.count(query);
+		if(createIndex)
+			createIndexIfNotExist(colName, query);
+		return count;
 	}
 	/**
 	 * Inserts item info into the database, formatted to ItemBeans(extracts up to 6 at a time due to 6 max items)

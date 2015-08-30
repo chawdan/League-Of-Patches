@@ -8,6 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.leaguebeta.db.connection.ClientConnector;
+import com.leaguebeta.db.model.Aggregate.BannedChampionBean;
 import com.leaguebeta.db.model.Aggregate.ChampionAggregateBean;
 import com.leaguebeta.db.model.Aggregate.ChampionBean;
 import com.leaguebeta.db.model.Aggregate.ItemAggregateBean;
@@ -133,12 +134,17 @@ public class MatchProcessor {
 			long matchDuration = match.getMatchDuration();
 			connection.insertJson(BeanParser.parseAnyBean(match), region + "_collection_match", MatchBean.queryParams);
 			PlayerMatchBean[] players = matchPackage.getPlayers();
+			BannedChampionBean[] bans = matchPackage.getBans();
 			String[] queryString = new String[players.length];
 			for (int j = 0; j < players.length; j++) {
 				queryString[j] = "" + players[j].getSummonerId();
 			}
 			String queryCompound = String.join(",", queryString);
 			JSONObject allLeagues = caller.callRiotLeague(region, queryCompound);
+			for (BannedChampionBean ban : bans){
+				connection.incrementJson(BeanParser.parseAnyBean(ban), region + "_collection_ban", 
+						ChampionAggregateBean.queryParams, ChampionAggregateBean.removeParams, false);
+			}
 			for (PlayerMatchBean player : players) {
 				// each player has their own rankings - so call the api for it
 				JSONArray league = null;

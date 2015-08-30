@@ -10,16 +10,37 @@ import com.leaguebeta.db.model.Match.Timeline.ParticipantFrameBean;
 
 public class MatchBean {
 	//general game info
-	public static transient ArrayList<String> queryParams;
+	public static transient ArrayList<String> queryParams, removeParams;
 	static{
 		queryParams = new ArrayList<String>();
+		removeParams = new ArrayList<String>();
+		
 		queryParams.add("matchId");
 		queryParams.add("season");
+		queryParams.add("weekDate");
+		queryParams.add("yearDate");
+		queryParams.add("matchType");
+		queryParams.add("queueType");
+		queryParams.add("mapId");
+		queryParams.add("region");
+		queryParams.add("matchMode");
+		
+		removeParams.add("matchId");
+		removeParams.add("season");
+		removeParams.add("weekDate");
+		removeParams.add("yearDate");
+		removeParams.add("matchType");
+		removeParams.add("queueType");
+		removeParams.add("mapId");
+		removeParams.add("region");
+		removeParams.add("matchMode");
+
 	}
 	int mapId; //int	Match map ID
 	long matchCreation; //long	Match creation time. Designates when the team select lobby is created and/or the match is made through match making, not when the game actually starts.
 	long matchDuration; //long	Match duration
 	long matchId; //long	ID of the match
+	int weekDate, yearDate;
 	String matchMode; //string	Match mode (Legal values: CLASSIC, ODIN, ARAM, TUTORIAL, ONEFORALL, ASCENSION, FIRSTBLOOD, KINGPORO)
 	String matchType; //string	Match type (Legal values: CUSTOM_GAME, MATCHED_GAME, TUTORIAL_GAME)
 	String matchVersion; //string	Match version
@@ -33,7 +54,8 @@ public class MatchBean {
 	//ParticipantFrameBean[] participantFrames;	//	Map[string, ParticipantFrame]	Map of each participant ID to the participant's information for the frame.
 	public MatchBean(){/*empty on purpose*/}
 	public MatchBean(int mapId, long matchCreation, long matchDuration, long matchId, String matchMode,
-			String matchType, String matchVersion, String platformId, String queueType, String region, String season) {
+			String matchType, String matchVersion, String platformId, String queueType, String region, String season,
+			int weekDate, int yearDate) {
 		super();
 		this.mapId = mapId;
 		this.matchCreation = matchCreation;
@@ -46,6 +68,8 @@ public class MatchBean {
 		this.queueType = queueType;
 		this.region = region;
 		this.season = season;
+		this.weekDate = weekDate;
+		this.yearDate = yearDate;
 	}
 	
 	public List<String> getQueryParams() {
