@@ -29,6 +29,8 @@ With their ability to speak to machines and adept ability in coding, they went h
   - Kendo UI for charts and statistics display
   - JQuery and AJAX to communicate with Riot's static API
   
+# How To Use Our Website
+
 # Our Goals In The Project
   - Allow the user to clearly and concisely see the difference in KDA, damage/damage taken, usage/popularity, scaling, specificity, skill level of a champion before and after patches. The data currently in the Nosql database holds 10 thousand North America, Korean, European(both west and north east), etc matches as a starting point for comparison for the AP Items. ✓
   - We want the display of the data to be clear and intuitive for the user, and allow the user to draw conclusions based on the data received. ✓
