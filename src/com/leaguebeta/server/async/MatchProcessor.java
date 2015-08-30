@@ -121,6 +121,8 @@ public class MatchProcessor {
 		long start = System.nanoTime();
 
     	for (int i = 0; i < matches.length(); i++) {
+    		if(i%100 == 0)
+    			System.out.println("100x has been processed");
 			JSONObject value = caller.callRiotMatch(region, "" + matches.getJSONObject(i).getInt("matchId"),
 					includeTimeline);
 			if (value == null)

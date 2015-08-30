@@ -130,45 +130,48 @@ public class BetaServlet extends HttpServlet {
 			queryRune.append("runeId", Integer.parseInt(request.getParameter("runeId")));
 			queryRune.append("championId", Integer.parseInt(request.getParameter("championId")));
 			System.out.println(queryRune);
-			connection.queryJson(queryRune, request.getParameter("region")+"_collection_rune", false);
-			sendJsonToServer(response, queryRune);
+			answer = connection.queryJson(queryRune, request.getParameter("region")+"_collection_rune", false);
+			sendJsonToServer(response, answer.toArray(new BasicDBObject[answer.size()]));
 			break;
 		case "/showAggregateMastery":
 			BasicDBObject queryMastery = buildDBObjectSkeleton(request);
 			queryMastery.append("masteryId", Integer.parseInt(request.getParameter("masteryId")));
 			queryMastery.append("championId", Integer.parseInt(request.getParameter("championId")));
 			System.out.println(queryMastery);
-			connection.queryJson(queryMastery, request.getParameter("region")+"_collection_mastery", false);
-			sendJsonToServer(response, queryMastery);
+			answer = connection.queryJson(queryMastery, request.getParameter("region")+"_collection_mastery", false);
+			sendJsonToServer(response, answer.toArray(new BasicDBObject[answer.size()]));
 			break;
 		case "/showTeam":
 			BasicDBObject queryTeam = buildBasicDBObjectSkeleton(request);
 			queryTeam.append("teamId", Integer.parseInt(request.getParameter("teamId")));
 			queryTeam.append("matchId", Integer.parseInt(request.getParameter("matchId")));
-			connection.queryJson(queryTeam, request.getParameter("region")+"_collection_team", false);
-			sendJsonToServer(response, queryTeam);
+			answer = connection.queryJson(queryTeam, request.getParameter("region")+"_collection_team", false);
+			sendJsonToServer(response, answer.toArray(new BasicDBObject[answer.size()]));
 		case "/showAggregateBans":
 			BasicDBObject queryBans = buildDBObjectWithoutDurationSkeleton(request);
 			queryBans.append("championId", request.getParameter("championId"));
 			String pickTurn = request.getParameter("pickTurn");
 			if(pickTurn != null)
 				queryBans.append("pickTurn", Integer.parseInt(pickTurn));
-			connection.queryJson(queryBans, request.getParameter("region")+"_collection_ban", false);
-			sendJsonToServer(response, queryBans);
+			answer = connection.queryJson(queryBans, request.getParameter("region")+"_collection_ban", false);
+			sendJsonToServer(response, answer.toArray(new BasicDBObject[answer.size()]));
 		// Rate-Limited API calls
 		case "/callRiotMatch":
 			JSONObject matchJson = caller.callRiotMatch(request.getParameter("region"), request.getParameter("matchID"),
 					Boolean.getBoolean(request.getParameter("includeTimeLine")));
 			// do other things here
 			System.out.println(matchJson);
+			sendJsonToServer(response, matchJson);
 			break;
 		case "/callRiotLeague":
 			JSONObject leagueJson = caller.callRiotLeague(request.getParameter("region"),
 					request.getParameter("summonerId"));
+			sendJsonToServer(response, leagueJson);
 			break;
 		case "/callRiotSummoner":
 			JSONObject summonerJson = caller.callRiotSummoner(request.getParameter("region"),
 					request.getParameter("name"));
+			sendJsonToServer(response, summonerJson);
 			break;
 		default:
 			response.sendRedirect("/");
@@ -300,7 +303,7 @@ public class BetaServlet extends HttpServlet {
 	public void sendJsonToServer(HttpServletResponse response, BasicDBObject[] arrayOfObjs) {
 		try {
 			PrintWriter out = response.getWriter();
-			out.write((new Gson()).toJson(arrayOfObjs));
+			out.write((new Gson()).toJson(arrayOfObjs).toString());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -308,7 +311,15 @@ public class BetaServlet extends HttpServlet {
 	public void sendJsonToServer(HttpServletResponse response, BasicDBObject arrayOfObjs) {
 		try {
 			PrintWriter out = response.getWriter();
-			out.write((new Gson()).toJson(arrayOfObjs));
+			out.write((new Gson()).toJson(arrayOfObjs).toString());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	public void sendJsonToServer(HttpServletResponse response, JSONObject arrayOfObjs) {
+		try {
+			PrintWriter out = response.getWriter();
+			out.write(arrayOfObjs.toString());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
