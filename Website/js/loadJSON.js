@@ -81,9 +81,13 @@ function loadIconsOfRunes(runes){
   /* reads runes information. We get the image associated with the rune ID(which we can get from
     rune.runeId), and append after that the quantity of the runes(which we can get from rune.rank)
     so it will be like "insert icon" x "insert quantity" */
+
 }
 function loadIconsOfItems(items){
   /* reads items, and gets their ID. Display them in a row underneath the icons of summoners*/
+  for (var item in items) {
+    var itemId = item.itemId;
+  }
 }
 function loadKda(kills, deaths, assists, winner){
   /* reads in these #'s and displays them in simple number format. For the win,
