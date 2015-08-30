@@ -42,4 +42,6 @@ With this change in the Pretty Big Patch, Rolando and Ray found their Luden's Ec
 
 With their ability to speak to machines and adept ability in coding, they went hard at work to retrieve data from Riot Games and analyze the before and after effects of the Pretty Big Patch(™). This was the fruit of their work.
 
+---
+
 League Of Patches isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games or anyone officially involved in producing or managing League of Legends. League of Legends and Riot Games are trademarks or registered trademarks of Riot Games, Inc. League of Legends © Riot Games, Inc.
