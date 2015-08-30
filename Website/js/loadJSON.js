@@ -75,6 +75,8 @@ function loadMatchHistoryInfo(json) {/*work on this*/
 function loadIconsOfSummoner(profileIcon, summonerName, summonerId){
   /* reads an image file of the icon, and displays summonerName as a clickable URL, with the value
     of summonerId. For now we can redirect the <a href> to the same page. */
+    var champImgUrl = "http://ddragon.leagueoflegends.com/cdn/5.15.1/img/champion/" + summonerName;
+
 
 }
 function loadIconsOfRunes(runes){
@@ -119,11 +121,86 @@ function loadDamageTaken(magicDamageTaken, physicalDamageTaken, trueDamageTaken,
 function loadWardCount(wardsPlaced, visionWardsBoughtInGame, sightWardsBoughtInGame){
   /*Just show these in numbers*/
 }
+
 /*====================================LOADING JSON=================================*/
+/*----UI METHODS(AJAX calls in main.js)----*/
 function loadChampInfo(json) {/*stub for now*/
+  for (var champ in json){
+    var championIdentities = match.championIdentities;
+    for (var champion in championIdentities) {
+      var championId = championId.championIdentities;
+      var champLevel = champLevel.championIdentities;
+    }
+
+  }
 
 }
 
 function loadChampAggregateInfo(json) {/*stub for now*/
+for (var champInfo in json) {
+    var champIdentities = match.champIdentities;
+      for (var champ in champIdentities) {
+        var top = champ.top;
+        var mid = champ.mid;
+        var middle = champ.middle;
+        var bot = champ.bot;
+        var jungle = champ.jungle;
+
+        var duo = champ.duo;
+        var none = champ.none;
+        var solo = champ.solo;
+        var duo_carry = champ.duo_carry;
+        var duo_support = champ.duo_support;
+
+        var weekDate = champ.weekDate;
+        var yearDate = champ.yearDate;
+
+        var assists = champ.assists;
+        var deaths = champ.deaths;
+        var kills = champ.kills;
+
+        //wins
+      }
+  }
+
+
+
+
+}
+
+function loadItemInfo(json) {/*stub for now*/
+  for (var item in json) {
+    var itemIdentities = match.itemIdentities;
+      for (var items in itemIdentities) {
+          var itemId = itemId.itemIdentities;
+
+      }
+  }
+}
+
+function loadItemAggregateInfo(json) {/*stub for now*/
+
+
+
+}
+
+function loadRuneInfo(json) {/*stub for now*/
+  for (var rune in json) {
+    var runeIdentities = match.runeIdentities;
+      for (var _rune in runes) {
+        var runeId = runeId.runeIdentities;
+        var runeRank = rune.rank;
+      }
+  }
+}
+
+function loadBanInfo(json) {/*stub for now*/
+  /*BE CAREFUL ABOUT THIS JSON IN PARTICULAR. THE
+  FORMAT OF THE JSON ARRAY IS: at [0], it specifies
+  the amount of games played ever. then, at [1->end],
+  it tells you each ban json object*/
+}
+
+function loadTeamInfo(json) {/*stub for now*/
 
 }
