@@ -16,13 +16,13 @@ With this change in the Pretty Big Patch, Rolando and Ray found their Luden's Ec
 With their ability to speak to machines and adept ability in coding, they went hard at work to retrieve data from Riot Games and analyze the before and after effects of the Pretty Big Patch(™). This was the fruit of their work.
 
 # Technologies Used
-------Backend------
+## Backend
   - Java Servlet Asynchronous backend (Multithreaded for each client as well)
   - Fully working REST API(from our side)
   - Jersey Java for backend API connection
   - Mongodb as a Nosql database
 
-------Frontend------
+## Frontend
   - Angularjs
   - Kendo UI for charts and statistics display
   - JQuery and AJAX to communicate with Riot's static API
@@ -34,7 +34,9 @@ With their ability to speak to machines and adept ability in coding, they went h
   - Allow for future patches to also be analyzed similarly, by allowing user-based contributions when they enter their username. ✓
   - After the analysis of data based on the statistics shown on the graphs, the users can then engage in a forum-like environment to decide for themselves which champions had the biggest impact in their opinion. ✗
   - Allow for real time updating of player information(When a match from a known player[a player that has interacted with our api before] is done, the server will detect and increment it). ✗
-  - 
+  - Have fun using the Riot Games API! ✓
+  - Use our secret information to win all of our mid-lane matchups. ✓
+  - Win the Riot Games API Contest 2.0 ?
 
 
 League Of Patches isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games or anyone officially involved in producing or managing League of Legends. League of Legends and Riot Games are trademarks or registered trademarks of Riot Games, Inc. League of Legends © Riot Games, Inc.
