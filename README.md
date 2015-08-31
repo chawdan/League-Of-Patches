@@ -36,7 +36,21 @@ The champions will be listed in a sortable list. The user can drag the champions
   - find the statistics of a champion in matches that end before the 20 minute mark? 30 minute mark? 40 minute mark? This would be very helpful for analyzing whether a champion is strong in lategame vs earlygame! **wink wink**
 
 ## The Items
----
+The items will be listed in a sortable list. It is similar to the champions in that it will be easy to navigate and drag and drop to sort the items. The items have similar statistics upon clicking on the specific name or the image of the item.
+
+#### This page is for those who want to:
+  - find the *win rate, KDA* of an item
+  - find the average damage dealt by champions who have this item *will this item give you higher dps?*
+  - find the average damage received by champions who have this item *will you be able to tank more with this item?*
+  - find which champions use this item the most
+  - find which role buys this item most frequently 
+
+#### This page has the following queries:
+  - find the stats for the item when a specific *champion* uses it
+  - find the stats for the item when a specific *role* uses it
+  - find the stats for the item when a specific *lane* uses it
+  - find the stats for the item for games that end before the twenty/thirty/fourty/etc minute mark. This would be very helpful in analyzing how strong an item allows the champions to scale! **wink wink**
+  - find stats for the item in a specific time frame, plotted as a scatterplot graph as weeks as the x axis. *This would be very beneficial for knowing how much stronger/weaker an item became after a patch! **WINKS FURIOUSLY** *
 ## The Bans
 ---
 ## The User's Account
