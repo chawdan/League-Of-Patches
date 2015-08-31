@@ -48,16 +48,12 @@ public class Stats {//a bean for data analysis
 			avgAssist += (double)(bean.getAssists())/list.size();
 			avgBarracksKilled += (double)(bean.getBarracksKilled())/list.size();
 			avgChampionsKilled += (double)(bean.getChampionsKilled())/list.size();
-			avgDamageDealtPlayer += (double)(bean.getDamageDealtPlayer())/list.size();
 			avgGold += (double)(bean.getGold())/list.size();
 			avgLargestKillingSpree += (double)(bean.getLargestKillingSpree())/list.size();
 			avgLevel += (double)(bean.getLevel())/list.size();
-			avgMagicDamageDealtPlayer += (double)(bean.getMagicDamageDealtPlayer())/list.size();
 			avgMagicDamageDealtToChampions += (double)(bean.getMagicDamageDealtToChampions())/list.size();
 			avgMinionsKilled += (double)(bean.getMinionsKilled())/list.size();
-			avgNeutralMinionsKilled += (double)(bean.getNeutralMinionsKilled())/list.size();
 			avgNumDeaths += (double)(bean.getNumDeaths())/list.size();
-			avgPhysicalDamageDealtPlayer += (double)(bean.getPhysicalDamageDealtPlayer())/list.size();
 			avgPhysicalDamageDealtToChampions += (double)(bean.getPhysicalDamageDealtToChampions())/list.size();
 			avgPhysicalDamageTaken += (double)(bean.getPhysicalDamageTaken())/list.size();
 			avgSightWardsBought += (double)(bean.getSightWardsBought())/list.size();
@@ -67,7 +63,6 @@ public class Stats {//a bean for data analysis
 			avgTotalDamageDealtToChampions += (double)(bean.getTotalDamageDealtToChampions())/list.size();
 			avgTotalDamageTaken += (double)(bean.getTotalDamageTaken())/list.size();
 			avgTotalHeal += (double)(bean.getTotalHeal())/list.size();
-			avgTrueDamageDealtPlayer += (double)(bean.getTrueDamageDealtPlayer())/list.size();
 			avgTrueDamageDealtToChampions += (double)(bean.getTrueDamageDealtToChampions())/list.size();
 			avgTrueDamageTaken += (double)(bean.getTrueDamageTaken())/list.size();
 			avgTurretsKilled += (double)(bean.getTurretsKilled())/list.size();
