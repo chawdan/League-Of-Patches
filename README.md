@@ -52,6 +52,14 @@ The items will be listed in a sortable list. It is similar to the champions in t
   - find the stats for the item for games that end before the twenty/thirty/fourty/etc minute mark. This would be very helpful in analyzing how strong an item allows the champions to scale! **wink wink**
   - find stats for the item in a specific time frame, plotted as a scatterplot graph as weeks as the x axis. *This would be very beneficial for knowing how much stronger/weaker an item became after a patch!* **WINKS FURIOUSLY** 
 
+## The Masteries
+The masteries page is very similar to the item and the runes' pages. The masteries show on average how many ranks someone puts in a specific mastery, and which roles take it the most.
+####Its queries and purpose is very similar to The Items(Refer above)
+
+## The Runes
+The runes page is very similar to the item and masteries' pages. The runes show on average how many ranks someone puts into a specific rune, and which roles take it the most.
+####Its queries and purpose is very similar to The Items(Refer above)
+
 ## The Bans
 This page, albeit the most simple in the website, has vital information about which champions are priority bans and which are not. 
 #### This page is for those who want to:
