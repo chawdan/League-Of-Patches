@@ -58,12 +58,17 @@ This page, albeit the most simple in the website, has vital information about wh
   - find out which picks are priority bans
   - find out how many times a specific champion is banned
   - find out which pick turn the champion was banned.
+  
 #### This page has the following queries:
   - find out which champions started to get banned more often as time passes(**maybe due to a patch?**)
   - find out how popular a champion is based off of specific rankings
   - find out how the ban pick priority of a champion changes over time.
   
 ## The User's Account
+This page is the individual player's OP.gg, it is a reward type sentiment for users who wish to add their name into our database and enrich the statistics pool. By giving us your summoner ID, our database will have more data to get a more accurate representation.
+
+#### This page is for those who want to:
+  - find out their match history
 
 # Our Goals In The Project
   - Allow the user to clearly and concisely see the difference in KDA, damage/damage taken, usage/popularity, scaling, specificity, skill level of a champion before and after patches. The data currently in the Nosql database holds 10 thousand North America, Korean, European(both west and north east), etc matches as a starting point for comparison for the AP Items. ✓
