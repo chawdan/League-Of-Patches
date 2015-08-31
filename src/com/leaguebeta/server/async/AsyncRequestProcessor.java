@@ -121,7 +121,7 @@ public class AsyncRequestProcessor implements Runnable {
 		JSONObject recentMatches = caller.callRiotMatchHistory(region, "" + playerId);
 		try {
 			PrintWriter out = res.getWriter();
-			out.write((new Gson()).toJson(recentMatches));
+			out.write(recentMatches.toString());
 			out.close();
 		} catch (IOException e) {
 			e.printStackTrace();

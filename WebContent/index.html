@@ -37,14 +37,21 @@
 </select>
 <input id="name" type="text">
 <button id="getApi" onclick="fetchSummonerID();">Click me!</button>
-<!--  weekstart, weekend, yearstart, yearend, divisionstart, divisionend, rankingstart, rankingend, matchDurationStart, matchDurationEnd, itemId  -->
-<button id="getItem" onclick="fetchItem(20,40,2015,2015,-1,-1,-1,-1,2,3,3143, 'na');"> Click me item! </button>
-<!--  weekstart, weekend, yearstart, yearend, divisionstart, divisionend, rankingstart, rankingend, matchDurationStart, matchDurationEnd, championId -->
-<button id="getChampion" onclick="fetchChamp(20,40,2015,2015,2, 4, 1, 3, 2, 3, 412, 'na')"> Click me champ! </button>
-<button id="getRunes" onclick="fetchRunes(20,40,2015,2015,-1,-1,-1,-1, 2, 3, 3143, 'na');"> Click me rune! </button>
-<button id="getMasteries" onclick="fetchMasteries(20,40,2015,2015,-1,-1,-1,-1,2,3,3143, 'na');"> Click me rune! </button>
+<!--  getItem(weekstart, weekend, yearstart, yearend, divisionstart, divisionend, rankingstart, rankingend, matchDurationStart, matchDurationEnd, championId, itemId, region)  -->
+<button id="getItem" onclick="getItem(20,40,2015,2015,2,4,1,3,2,3,412,3143, 'na');"> Click me item! </button>
+<!--  getItem(weekstart, weekend, yearstart, yearend, divisionstart, divisionend, rankingstart, rankingend, matchDurationStart, matchDurationEnd, championId, itemId, region)  -->
+<button id="getAggItem" onclick="getAggregateItem(20, 40, 2015, 2015, 3143, 'na');"> Click me item! </button>
+<!--  getChamp(weekstart, weekend, yearstart, yearend, divisionstart, divisionend, rankingstart, rankingend, matchDurationStart, matchDurationEnd, championId, region) -->
+<button id="getChampion" onclick="getChamp(20,40,2015,2015,2, 4, 1, 3, 2, 3, 412, 'na')"> Click me champ! </button>
+<!-- function getAggregateChamp(weekstart, weekend, yearstart, yearend, championId, region) -->
+<button id="getAggChampion" onclick="getAggregateChamp(20,40,2015,2015,412, 'na')"> Click me agg champ! </button>
+<!-- getRune(weekstart, weekend, yearstart, yearend, divisionstart, divisionend, rankingstart, rankingend, matchDurationStart, matchDurationEnd, championId, runeId, region) -->
+<button id="getRunes" onclick="getRune(20,40,2015,2015,-1,-1,-1,-1, 2, 3, 412, 5335, 'na');"> Click me rune! </button>
+<button id="getMasteries" onclick="getMastery(20,40,2015,2015,-1,-1,-1,-1,2,3, 412, 4334, 'na');"> Click me masteries! </button>
+<button id="getBans" onclick="getBans(20, 40, 2015, 2015, 2, 4, 1, 3, 11, 4, 'na');"> Click me bans! </button>
 <div id="populateDiv">
 Hello!
 </div>
 </body>
 </html>
+

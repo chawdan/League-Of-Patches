@@ -103,10 +103,13 @@ public class BetaServlet extends HttpServlet {
 			queryAggregateChamp.append("championId", Integer.parseInt(request.getParameter("championId")));
 			answer = connection.queryJson(queryAggregateChamp, request.getParameter("region")+"_collection_champ_aggregate", false); //queryChamp, request.getParameter("region")+"_collection_champ");
 			sendJsonToServer(response, answer.toArray(new BasicDBObject[answer.size()]));
+			break;
 		case "/showAggregateItem":
 			BasicDBObject queryItem = buildDBObjectSkeleton(request);
 			queryItem.append("itemId", Integer.parseInt(request.getParameter("itemId")));
-			queryItem.append("championId", Integer.parseInt(request.getParameter("championId")));
+			String champIdItem = request.getParameter("championId");
+			if(champIdItem != null)
+				queryItem.append("championId", Integer.parseInt(champIdItem));
 			System.out.println(queryItem);
 			answer = connection.queryJson(queryItem, request.getParameter("region")+"_collection_item", false);
 			for(BasicDBObject ans : answer){
@@ -117,7 +120,6 @@ public class BetaServlet extends HttpServlet {
 		case "/showAllAggregateItem":
 			BasicDBObject queryAggregateItem = buildBasicDBObjectSkeleton(request);
 			queryAggregateItem.append("itemId", Integer.parseInt(request.getParameter("itemId")));
-			queryAggregateItem.append("championId", Integer.parseInt(request.getParameter("championId")));
 			System.out.println(queryAggregateItem);
 			answer = connection.queryJson(queryAggregateItem, request.getParameter("region")+"_collection_item_aggregate", false);
 			for(BasicDBObject ans : answer){
@@ -128,7 +130,9 @@ public class BetaServlet extends HttpServlet {
 		case "/showAggregateRune":
 			BasicDBObject queryRune = buildDBObjectSkeleton(request);
 			queryRune.append("runeId", Integer.parseInt(request.getParameter("runeId")));
-			queryRune.append("championId", Integer.parseInt(request.getParameter("championId")));
+			String champIdRune = request.getParameter("championId");
+			if(champIdRune != null)
+				queryRune.append("championId", Integer.parseInt(champIdRune));
 			System.out.println(queryRune);
 			answer = connection.queryJson(queryRune, request.getParameter("region")+"_collection_rune", false);
 			sendJsonToServer(response, answer.toArray(new BasicDBObject[answer.size()]));
@@ -136,7 +140,9 @@ public class BetaServlet extends HttpServlet {
 		case "/showAggregateMastery":
 			BasicDBObject queryMastery = buildDBObjectSkeleton(request);
 			queryMastery.append("masteryId", Integer.parseInt(request.getParameter("masteryId")));
-			queryMastery.append("championId", Integer.parseInt(request.getParameter("championId")));
+			String champIdMastery = request.getParameter("championId");
+			if(champIdMastery != null)
+				queryMastery.append("championId", Integer.parseInt(champIdMastery));
 			System.out.println(queryMastery);
 			answer = connection.queryJson(queryMastery, request.getParameter("region")+"_collection_mastery", false);
 			sendJsonToServer(response, answer.toArray(new BasicDBObject[answer.size()]));
@@ -147,14 +153,19 @@ public class BetaServlet extends HttpServlet {
 			queryTeam.append("matchId", Integer.parseInt(request.getParameter("matchId")));
 			answer = connection.queryJson(queryTeam, request.getParameter("region")+"_collection_team", false);
 			sendJsonToServer(response, answer.toArray(new BasicDBObject[answer.size()]));
+			break;
 		case "/showAggregateBans":
 			BasicDBObject queryBans = buildDBObjectWithoutDurationSkeleton(request);
-			queryBans.append("championId", request.getParameter("championId"));
+			BasicDBObject queryBanQty = buildBasicDBObjectSkeleton(request);
+			queryBans.append("championId", Integer.parseInt(request.getParameter("championId")));
 			String pickTurn = request.getParameter("pickTurn");
 			if(pickTurn != null)
 				queryBans.append("pickTurn", Integer.parseInt(pickTurn));
 			answer = connection.queryJson(queryBans, request.getParameter("region")+"_collection_ban", false);
+			answer.add(0, new BasicDBObject("qtyOfPlays", connection.getSpecifiedCollectionSize(queryBanQty, 
+					request.getParameter("region")+"_collection_match", false)));
 			sendJsonToServer(response, answer.toArray(new BasicDBObject[answer.size()]));
+			break;
 		// Rate-Limited API calls
 		case "/callRiotMatch":
 			JSONObject matchJson = caller.callRiotMatch(request.getParameter("region"), request.getParameter("matchID"),

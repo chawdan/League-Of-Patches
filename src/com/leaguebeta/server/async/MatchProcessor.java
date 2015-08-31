@@ -138,15 +138,14 @@ public class MatchProcessor {
 			PlayerMatchBean[] players = matchPackage.getPlayers();
 			BannedChampionBean[] bans = matchPackage.getBans();
 			String[] queryString = new String[players.length];
+			//for banbeans rank - it was lazily initialized at first.
+			int highestRank = 0;
 			for (int j = 0; j < players.length; j++) {
 				queryString[j] = "" + players[j].getSummonerId();
 			}
 			String queryCompound = String.join(",", queryString);
 			JSONObject allLeagues = caller.callRiotLeague(region, queryCompound);
-			for (BannedChampionBean ban : bans){
-				connection.incrementJson(BeanParser.parseAnyBean(ban), region + "_collection_ban", 
-						ChampionAggregateBean.queryParams, ChampionAggregateBean.removeParams, false);
-			}
+			
 			for (PlayerMatchBean player : players) {
 				// each player has their own rankings - so call the api for it
 				JSONArray league = null;
@@ -156,6 +155,9 @@ public class MatchProcessor {
 					league = new JSONArray();
 				}
 				RankBean rank = RankBeanMapper.getSpecificRank(league, match.getQueueType());
+				//taking care of ban beans
+				if(rank.getRank() > highestRank)
+					highestRank = rank.getRank();
 
 				ItemBean[] items = ItemBean.playerMatchBeanToItemBean(player, rank, matchDuration);
 				ItemAggregateBean[] itemAggregates = ItemAggregateBean.playerMatchBeanToItemAggregateBean(player);
@@ -199,7 +201,13 @@ public class MatchProcessor {
 			for (TeamBean team : teams) {
 				connection.insertJson(BeanParser.parseAnyBean(team), region + "_collection_team", TeamBean.queryParams);
 			}
+			for (BannedChampionBean ban : bans){
+				ban.setRank(highestRank);
+				connection.incrementJson(BeanParser.parseAnyBean(ban), region + "_collection_ban", 
+						BannedChampionBean.queryParams, BannedChampionBean.removeParams, false);
+			}
 		}
+    	
 		long end = System.nanoTime();
 		System.out.println("successful! Time: " + (end - start) / 1000000000);
     }

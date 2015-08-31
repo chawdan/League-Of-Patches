@@ -10,8 +10,8 @@ import org.json.JSONObject;
 import com.leaguebeta.db.model.Aggregate.RankBean;
 
 public class RankBeanMapper {
-	static Map<String, Integer> rankWeight = new HashMap<String, Integer>();
-	static Map<String, Integer> divisionWeight = new HashMap<String, Integer>();
+	public static Map<String, Integer> rankWeight = new HashMap<String, Integer>();
+	public static Map<String, Integer> divisionWeight = new HashMap<String, Integer>();
 	static{
 		rankWeight.put("UNRANKED", 0);//theoretically this should never happen
 		rankWeight.put("BRONZE", 1);
