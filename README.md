@@ -17,7 +17,7 @@ After every patch, the win rates of champions fluxuate depending on how severe t
   
 # How To Use Our Website
 ## The Intro 
-Upon entering our website, the user is confronted with the 4 different choices listed below, with a slight overview of each in the main screen. The intro's main job is to guide the users to the different functionalities of the website.
+Upon entering our website, the user is confronted with the 4 different choices listed below, with a slight overview of each in the main screen. The intro's main job is to guide the users to the different functionalities of the website. There will be specific functionalities and queries explained(the queries can be used simultaneously).
 
 ## The Champions
 The champions will be listed in a sortable list. The user can drag the champions list positions around for better visualization. However, the list is first sorted alphabetically. Upon clicking the champion's name or its image, the user will be directed to a page for a much expanded version of statistics, displaying a wide variety of data. 
@@ -52,9 +52,17 @@ The items will be listed in a sortable list. It is similar to the champions in t
   - find the stats for the item for games that end before the twenty/thirty/fourty/etc minute mark. This would be very helpful in analyzing how strong an item allows the champions to scale! **wink wink**
   - find stats for the item in a specific time frame, plotted as a scatterplot graph as weeks as the x axis. *This would be very beneficial for knowing how much stronger/weaker an item became after a patch!* **WINKS FURIOUSLY** 
 
-
 ## The Bans
 This page, albeit the most simple in the website, has vital information about which champions are priority bans and which are not. 
+#### This page is for those who want to:
+  - find out which picks are priority bans
+  - find out how many times a specific champion is banned
+  - find out which pick turn the champion was banned.
+#### This page has the following queries:
+  - find out which champions started to get banned more often as time passes(**maybe due to a patch?**)
+  - find out how popular a champion is based off of specific rankings
+  - find out how the ban pick priority of a champion changes over time.
+  
 ## The User's Account
 
 # Our Goals In The Project
