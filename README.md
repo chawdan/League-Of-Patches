@@ -54,7 +54,7 @@ The items will be listed in a sortable list. It is similar to the champions in t
 
 
 ## The Bans
----
+This page, albeit the most simple in the website, has vital information about which champions are priority bans and which are not. 
 ## The User's Account
 
 # Our Goals In The Project
