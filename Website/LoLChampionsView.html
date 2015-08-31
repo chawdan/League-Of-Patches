@@ -15,28 +15,33 @@
         <link rel="stylesheet" href="CSS/Bootstrap.min.css">
         <!-- Main -->
         <link rel="stylesheet" href="CSS/Main.css">
-        <!-- KendoUI -->
-        <link rel="stylesheet" type="text/css" href="CSS/kendo.common.min.css">
-        <link rel="stylesheet" type="text/css" href="CSS/kendo.default.min.css">
-        <link rel="stylesheet" type="text/css" href="CSS/kendo.flat.css">
+        <title>Welcome to Kendo UI</title>
+    <link rel="stylesheet" href="http://kendo.cdn.telerik.com/2014.1.318/styles/kendo.common.min.css" />
+    <link rel="stylesheet" href="http://kendo.cdn.telerik.com/2014.1.318/styles/kendo.blueopal.min.css" />
 
-        <script type="text/javascript" src="js/jquery.min.js"></script>
-        <script type="text/javascript" src="js/kendo.all.min.js"></script>
-        <!-- <script type="text/javascript" src="js/main.js"></script> -->
-        <script type="text/javascript" src="js/kendo.flat.js"></script>
+    <script src="http://kendo.cdn.telerik.com/2014.1.318/js/jquery.min.js"></script>
+    <script>
+        if (typeof jQuery == "undefined") {
+            // fallback to local jQuery
+            document.write(decodeURIComponent('%3Cscript src="/path/to/local/jquery.min.js" %3E%3C/script%3E'));
+        }
+    </script>
 
+    <script src="http://kendo.cdn.telerik.com/2014.1.318/js/kendo.all.min.js"></script>
+    <script>
+        if (typeof kendo == "undefined") {
+            // checking for loaded CSS files is cumbersome,
+            // that's why we assume that if the scripts have failed, so have the stylesheets
 
+            // fallback to local Kendo UI stylesheets
+            document.write(decodeURIComponent('%3Clink rel="stylesheet" href="/path/to/local/kendo.common.min.css" %3C/%3E'));
+            document.write(decodeURIComponent('%3Clink rel="stylesheet" href="/path/to/local/kendo.blueopal.min.css" %3C/%3E'));
 
-        <!-- but if you put them here, the bar doesnt work -->
-
-        <base href="http://demos.telerik.com/kendo-ui/chart-api/index">
-        <style>html { font-size: 14px; font-family: Arial, Helvetica, sans-serif; }</style>
-        <title></title>
-        <link rel="stylesheet" href="//kendo.cdn.telerik.com/2015.2.805/styles/kendo.common-material.min.css" />
-        <link rel="stylesheet" href="//kendo.cdn.telerik.com/2015.2.805/styles/kendo.material.min.css" />
-
-        <script src="//kendo.cdn.telerik.com/2015.2.805/js/jquery.min.js"></script>
-        <script src="//kendo.cdn.telerik.com/2015.2.805/js/kendo.all.min.js"></script>
+            // fallback to local Kendo UI scripts
+            document.write(decodeURIComponent('%3Cscript src="/path/to/local/kendo.all.min.js" %3E%3C/script%3E'));
+            // also add kendo.aspnetmvc.min.js or kendo.timezones.min.js, if needed
+        }
+    </script>
 
     </head>
 
