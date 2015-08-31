@@ -50,7 +50,9 @@ The items will be listed in a sortable list. It is similar to the champions in t
   - find the stats for the item when a specific *role* uses it
   - find the stats for the item when a specific *lane* uses it
   - find the stats for the item for games that end before the twenty/thirty/fourty/etc minute mark. This would be very helpful in analyzing how strong an item allows the champions to scale! **wink wink**
-  - find stats for the item in a specific time frame, plotted as a scatterplot graph as weeks as the x axis. *This would be very beneficial for knowing how much stronger/weaker an item became after a patch! **WINKS FURIOUSLY** *
+  - find stats for the item in a specific time frame, plotted as a scatterplot graph as weeks as the x axis. *This would be very beneficial for knowing how much stronger/weaker an item became after a patch!* **WINKS FURIOUSLY** 
+
+
 ## The Bans
 ---
 ## The User's Account
