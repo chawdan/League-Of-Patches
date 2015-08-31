@@ -199,6 +199,20 @@ function loadBanInfo(json) {/*stub for now*/
   FORMAT OF THE JSON ARRAY IS: at [0], it specifies
   the amount of games played ever. then, at [1->end],
   it tells you each ban json object*/
+
+  for (var banInfo in json) {
+    var banIdentities = match.banIdentities;
+      for (var ban in banIdentities) {
+        var qtyOfPlays = ban.qtyOfPlays;
+        var pickTurn = ban.pickTurn;
+        var rank = ban.rank;
+        var weekDate = ban.weekDate;
+        var yearDate = ban.yearDate;
+        var qty = ban.qty;
+      }
+  }
+
+
 }
 
 function loadTeamInfo(json) {/*stub for now*/
