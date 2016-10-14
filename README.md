@@ -92,16 +92,13 @@ This page is the individual player's OP.gg, it is a reward type sentiment for us
   - Win the Riot Games API Contest 2.0 ?
 
 # Participants
-## Frontend
-###[No one because the frontend dev did nothing], the Revered Inventor.
-![alt tag](http://i.ytimg.com/vi/vcf4Yk5C_uE/maxresdefault.jpg)
 ## Backend
 ###Ray Zhang, the Machine Herald.
 ![alt tag](http://i.ytimg.com/vi/Lwe_0plVzGI/maxresdefault.jpg)
 ## Story
-Together, the mishmash of [no one] and Ray have always been accomplices or foes on the rift of justice. Their ability power driven skills caused the likes of Riven, Vayne, Katarina, and other hyper-carries to shiver in fear. One day, when they were busy at work defeating their mid-lane enemies, a shining light illuminated the entire field. The hand of Riot emerged from the clouds and worked its magic throughout the lands. The shop keepers were forced by law to change the price of Needlessly Large Rods, Liandry's, and more. It was the law of the land - noone could disobey the almighty Riot. That day was known as the Pretty Big Patch(™), or otherwise known as Patch 5.13. 
+Together, the mishmash of Ray have always been accomplices or foes on the rift of justice. Their ability power driven skills caused the likes of Riven, Vayne, Katarina, and other hyper-carries to shiver in fear. One day, when they were busy at work defeating their mid-lane enemies, a shining light illuminated the entire field. The hand of Riot emerged from the clouds and worked its magic throughout the lands. The shop keepers were forced by law to change the price of Needlessly Large Rods, Liandry's, and more. It was the law of the land - noone could disobey the almighty Riot. That day was known as the Pretty Big Patch(™), or otherwise known as Patch 5.13. 
 
-With this change in the Pretty Big Patch, [No one]and Ray found their Luden's Echo staff losing its shine and power, as their enemies finally were able to win a single match. This was obviously not acceptable for the two masterminds.
+With this change in the Pretty Big Patch, [future frontend] and Ray found their Luden's Echo staff losing its shine and power, as their enemies finally were able to win a single match. This was obviously not acceptable for the two masterminds.
 
 With their ability to speak to machines and adept ability in coding, they went hard at work to retrieve data from Riot Games and analyze the before and after effects of the Pretty Big Patch(™). This was the fruit of their work.
 
